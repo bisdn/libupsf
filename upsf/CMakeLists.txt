@@ -16,15 +16,15 @@ get_filename_component(upsf_proto "../upsf/protos/sssupsf.proto" ABSOLUTE)
 get_filename_component(upsf_proto_path "${upsf_proto}" PATH)
 
 # Generated sources
-set(upsf_proto_srcs "${CMAKE_CURRENT_SOURCE_DIR}/sssupsf.pb.cc")
-set(upsf_proto_hdrs "${CMAKE_CURRENT_SOURCE_DIR}/sssupsf.pb.h")
-set(upsf_grpc_srcs "${CMAKE_CURRENT_SOURCE_DIR}/sssupsf.grpc.pb.cc")
-set(upsf_grpc_hdrs "${CMAKE_CURRENT_SOURCE_DIR}/sssupsf.grpc.pb.h")
+set(upsf_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/sssupsf.pb.cc")
+set(upsf_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/sssupsf.pb.h")
+set(upsf_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/sssupsf.grpc.pb.cc")
+set(upsf_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/sssupsf.grpc.pb.h")
 add_custom_command(
       OUTPUT "${upsf_proto_srcs}" "${upsf_proto_hdrs}" "${upsf_grpc_srcs}" "${upsf_grpc_hdrs}"
       COMMAND ${PROTOBUF_PROTOC}
-      ARGS --grpc_out "${CMAKE_CURRENT_SOURCE_DIR}"
-        --cpp_out "${CMAKE_CURRENT_SOURCE_DIR}"
+      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
+        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
         -I "${upsf_proto_path}"
         --plugin=protoc-gen-grpc="${GRPC_CPP_PLUGIN_EXECUTABLE}"
         "${upsf_proto}"
@@ -55,5 +55,5 @@ target_link_libraries(upsf
 
 # Make sure the compiler can find include files for our Hello library
 # when other libraries or executables link to Hello
-target_include_directories (upsf PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories (upsf PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
