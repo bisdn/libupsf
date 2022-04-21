@@ -1,13 +1,11 @@
-# CMakeLists files in this project can
-# refer to the root source directory of the project as ${HELLO_SOURCE_DIR} and
-# to the root binary directory of the project as ${HELLO_BINARY_DIR}.
 cmake_minimum_required (VERSION 3.8.0)
-project (upsf C CXX)
+project (upsf
+  LANGUAGES C CXX
+  HOMEPAGE_URL https://gitlab.bisdn.de/DBNG/libupsf
+  DESCRIPTION "a UPSF gRPC client implementation in C++"
+  VERSION 0.1.0
+  )
 
-# Recurse into the "Hello" and "Demo" subdirectories. This does not actually
-# cause another cmake executable to run. The same process will walk through
-# the project's entire directory structure.
 add_subdirectory (upsf)
-add_subdirectory (upsfcli)
-
-# include(ExternalProject)
+add_subdirectory (upsf_test_c)
+add_subdirectory (upsf_test_cpp)
