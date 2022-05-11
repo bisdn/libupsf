@@ -92,6 +92,7 @@ class UpsfSubscriberWrapper : public upsf::UpsfSubscriber {
       upsf_session_context.item_status = session_context.metadata().item_status();
       strncpy(upsf_session_context.tsf, session_context.spec().traffic_steering_function().c_str(), sizeof(upsf_session_context.tsf) - 1);
       strncpy(upsf_session_context.desired_shard, session_context.spec().desired_shard().c_str(), sizeof(upsf_session_context.desired_shard) - 1);
+      strncpy(upsf_session_context.current_shard, session_context.status().current_shard().c_str(), sizeof(upsf_session_context.current_shard) - 1);
       for (int i = 0; i < std::min(session_context.spec().required_service_group_size(), UPSF_MAX_NUM_REQUIRED_SERVICE_GROUPS); i++) {
         strncpy(upsf_session_context.required_service_groups[i].str, session_context.spec().required_service_group(i).c_str(), sizeof(upsf_session_context.required_service_groups[i].str) - 1);
       }
@@ -186,6 +187,25 @@ class UpsfSubscriberWrapper : public upsf::UpsfSubscriber {
 std::map<upsf_handle_t, std::shared_ptr<UpsfSlot> > upsf_slots;
 std::shared_mutex upsf_slots_mutex;
 
+const char* upsf_item_status_names[] = {
+    "unknown",
+    "active",
+    "updating",
+    "deleting",
+    "deleted",
+    "inactive",
+    "invalid",
+};
+
+/**
+ * map upsf item status to associated name
+ */
+const char* upsf_item_status_to_name(int item_status)
+{
+    item_status = item_status < UPSF_ITEM_STATUS_MAX ? item_status : UPSF_ITEM_STATUS_MAX;
+    return upsf_item_status_names[item_status];
+}
+
 /**
  * open upsf connection
  */
@@ -275,6 +295,7 @@ upsf_shard_t* upsf_update_shard(upsf_handle_t upsf_handle, upsf_shard_t* shard) 
   /* call upsf client instance */
   if (!slot->client->UpdateShard(
     std::string(shard->name),
+    bbf::sss::ItemStatus(shard->item_status),
     shard->max_session_count,
     std::string(shard->desired_service_gateway_user_plane),
     desired_network_connection,
@@ -527,7 +548,7 @@ upsf_service_gateway_t* upsf_update_service_gateway(upsf_handle_t upsf_handle, u
   std::unique_lock rwlock(slot->mutex);
 
   /* call upsf client instance */
-  if (!slot->client->UpdateServiceGateway(std::string(service_gateway->name), resp)) {
+  if (!slot->client->UpdateServiceGateway(std::string(service_gateway->name), bbf::sss::ItemStatus(service_gateway->item_status), resp)) {
     return nullptr;
   }
 
@@ -716,6 +737,7 @@ upsf_service_gateway_user_plane_t* upsf_update_service_gateway_user_plane(upsf_h
   /* call upsf client instance */
   if (!slot->client->UpdateServiceGatewayUserPlane(
     std::string(service_gateway_user_plane->name),
+    bbf::sss::ItemStatus(service_gateway_user_plane->item_status),
     std::string(service_gateway_user_plane->service_gateway_id),
     service_gateway_user_plane->max_session_count,
     supported_service_groups,
@@ -956,8 +978,10 @@ upsf_session_context_t* upsf_update_session_context(upsf_handle_t upsf_handle, u
   /* call upsf client instance */
   if (!slot->client->UpdateSessionContext(
     std::string(session_context->name),
+    bbf::sss::ItemStatus(session_context->item_status),
     std::string(session_context->tsf),
     std::string(session_context->desired_shard),
+    std::string(session_context->current_shard),
     req_svc_grp,
     std::string(session_context->required_qos),
     (bbf::sss::SessionContext_Spec_ContextType)session_context->context_type,
@@ -983,6 +1007,7 @@ upsf_session_context_t* upsf_update_session_context(upsf_handle_t upsf_handle, u
   session_context->item_status = resp.session_context().metadata().item_status();
   strncpy(session_context->tsf, resp.session_context().spec().traffic_steering_function().c_str(), sizeof(session_context->tsf) - 1); 
   strncpy(session_context->desired_shard, resp.session_context().spec().desired_shard().c_str(), sizeof(session_context->desired_shard) - 1); 
+  strncpy(session_context->current_shard, resp.session_context().status().current_shard().c_str(), sizeof(session_context->current_shard) - 1); 
   for (int i = 0; i < std::min(resp.session_context().spec().required_service_group_size(), UPSF_MAX_NUM_REQUIRED_SERVICE_GROUPS); i++) {
     strncpy(session_context->required_service_groups[i].str, resp.session_context().spec().required_service_group(i).c_str(), sizeof(session_context->required_service_groups[i].str) - 1); 
   }
@@ -1047,6 +1072,7 @@ upsf_session_context_t* upsf_get_session_context(upsf_handle_t upsf_handle, upsf
   session_context->item_status = resp.session_context().metadata().item_status();
   strncpy(session_context->tsf, resp.session_context().spec().traffic_steering_function().c_str(), sizeof(session_context->tsf) - 1); 
   strncpy(session_context->desired_shard, resp.session_context().spec().desired_shard().c_str(), sizeof(session_context->desired_shard) - 1); 
+  strncpy(session_context->current_shard, resp.session_context().status().current_shard().c_str(), sizeof(session_context->current_shard) - 1); 
   for (int i = 0; i < std::min(resp.session_context().spec().required_service_group_size(), UPSF_MAX_NUM_REQUIRED_SERVICE_GROUPS); i++) {
     strncpy(session_context->required_service_groups[i].str, resp.session_context().spec().required_service_group(i).c_str(), sizeof(session_context->required_service_groups[i].str) - 1); 
   }
@@ -1136,6 +1162,7 @@ int upsf_list_session_contexts(upsf_handle_t upsf_handle, upsf_session_context_t
     elems[i].item_status = resp.session_context(i).metadata().item_status();
     strncpy(elems[i].tsf, resp.session_context(i).spec().traffic_steering_function().c_str(), sizeof(elems[i].tsf) - 1); 
     strncpy(elems[i].desired_shard, resp.session_context(i).spec().desired_shard().c_str(), sizeof(elems[i].desired_shard) - 1); 
+    strncpy(elems[i].current_shard, resp.session_context(i).status().current_shard().c_str(), sizeof(elems[i].current_shard) - 1); 
     for (int j = 0; j < std::min(resp.session_context(i).spec().required_service_group_size(), UPSF_MAX_NUM_REQUIRED_SERVICE_GROUPS); j++) {
       strncpy(elems[i].required_service_groups[j].str, resp.session_context(i).spec().required_service_group(j).c_str(), sizeof(elems[i].required_service_groups[j].str) - 1); 
     }

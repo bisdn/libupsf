@@ -127,6 +127,7 @@ public:
    * rpc UpdateShard (UpdateShardReq) returns (ShardResp) {}
    */
   bool UpdateShard(const std::string &name,
+                   const bbf::sss::ItemStatus &item_status,
                    int max_session_count,
                    const std::string &desired_service_gateway_user_plane,
                    const std::vector<std::string> &desired_network_connection,
@@ -138,6 +139,7 @@ public:
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     bbf::sss::UpdateShardReq req;
     req.mutable_shard()->mutable_metadata()->set_name(name);
+    req.mutable_shard()->mutable_metadata()->set_item_status(item_status);
     req.mutable_shard()->mutable_spec()->set_desired_service_gateway_user_plane(desired_service_gateway_user_plane);
     for (auto it : desired_network_connection) {
       req.mutable_shard()->mutable_spec()->add_desired_network_connection(it);
@@ -278,10 +280,12 @@ public:
    * rpc UpdateServiceGateway (UpdateServiceGatewayReq) returns (ServiceGatewayResp) {}
    */
   bool UpdateServiceGateway(const std::string &name,
+                            const bbf::sss::ItemStatus &item_status,
                             bbf::sss::ServiceGatewayResp &resp) {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     bbf::sss::UpdateServiceGatewayReq req;
     req.mutable_service_gateway()->mutable_metadata()->set_name(name);
+    req.mutable_service_gateway()->mutable_metadata()->set_item_status(item_status);
     return UpdateServiceGateway(req, resp);
   };
 
@@ -409,6 +413,7 @@ public:
    * rpc UpdateServiceGatewayUserPlane (UpdateServiceGatewayUserPlaneReq) returns (ServiceGatewayUserPlaneResp) {}
    */
   bool UpdateServiceGatewayUserPlane(const std::string &name,
+                                     const bbf::sss::ItemStatus &item_status,
                                      const std::string &service_gateway_id,
                                      int32_t max_session_count,
                                      const std::vector<std::string> &supported_service_groups,
@@ -419,6 +424,7 @@ public:
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     bbf::sss::UpdateServiceGatewayUserPlaneReq req;
     req.mutable_service_gateway_user_plane()->mutable_metadata()->set_name(name);
+    req.mutable_service_gateway_user_plane()->mutable_metadata()->set_item_status(item_status);
     req.mutable_service_gateway_user_plane()->set_service_gateway_id(service_gateway_id);
     req.mutable_service_gateway_user_plane()->mutable_spec()->set_max_session_count(max_session_count);
     for (auto it : supported_service_groups) {
@@ -556,8 +562,10 @@ public:
    * rpc UpdateSessionContext (UpdateSessionContextReq) returns (SessionContextResp) {}
    */
   bool UpdateSessionContext(const std::string &name,
+                            const bbf::sss::ItemStatus &item_status,
                             const std::string &tsf,
                             const std::string &desired_shard,
+                            const std::string &current_shard,
                             const std::vector<std::string> &required_service_group,
                             const std::string &required_qos,
                             const bbf::sss::SessionContext_Spec_ContextType &context_type,
@@ -570,6 +578,7 @@ public:
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     bbf::sss::UpdateSessionContextReq req;
     req.mutable_session_context()->mutable_metadata()->set_name(name);
+    req.mutable_session_context()->mutable_metadata()->set_item_status(item_status);
     req.mutable_session_context()->mutable_spec()->set_traffic_steering_function(tsf);
     req.mutable_session_context()->mutable_spec()->set_desired_shard(desired_shard);
     for (auto it : required_service_group) {

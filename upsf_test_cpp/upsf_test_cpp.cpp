@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
 
   // update service gateway
   bbf::sss::ServiceGatewayResp uresp;
-  if (!client.UpdateServiceGateway(std::string("up1"), uresp)) {
+  if (!client.UpdateServiceGateway(std::string("up1"), bbf::sss::ItemStatus::updating, uresp)) {
     LOG(ERROR) << "failure: UpdateServiceGateway" << std::endl;
     return -1;
   }

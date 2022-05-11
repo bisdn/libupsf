@@ -19,9 +19,20 @@ typedef int upsf_handle_t;
 #define UPSF_MAX_NUM_SUPPORTED_SERVICE_GROUPS 16
 
 enum session_context_type_t {
-    DEFAULT = 0,
-    PPPOE = 1,
-    IPOE = 2,
+    UPSF_SESSION_CONTEXT_DEFAULT = 0,
+    UPSF_SESSION_CONTEXT_PPPOE = 1,
+    UPSF_SESSION_CONTEXT_IPOE = 2,
+    UPSF_SESSION_CONTEXT_MAX,
+};
+
+enum upsf_item_status_t {
+    UPSF_ITEM_STATUS_UNKNOWN = 0,
+    UPSF_ITEM_STATUS_ACTIVE = 1,
+    UPSF_ITEM_STATUS_UPDATING = 2,
+    UPSF_ITEM_STATUS_DELETING = 3,
+    UPSF_ITEM_STATUS_DELETED = 4,
+    UPSF_ITEM_STATUS_INACTIVE = 5,
+    UPSF_ITEM_STATUS_MAX,
 };
 
 /* string type */
@@ -49,6 +60,7 @@ typedef struct {
     int item_status;
     char tsf[UPSF_MAX_STRING_SIZE];
     char desired_shard[UPSF_MAX_STRING_SIZE];
+    char current_shard[UPSF_MAX_STRING_SIZE];
     upsf_string_t required_service_groups[UPSF_MAX_NUM_REQUIRED_SERVICE_GROUPS];
     size_t required_service_groups_size;
     char required_qos[UPSF_MAX_STRING_SIZE];
@@ -117,6 +129,9 @@ upsf_handle_t upsf_open(
 
 int upsf_close(
     upsf_handle_t upsf_handle);
+
+const char* upsf_item_status_to_name(
+    int item_status);
 
 upsf_shard_t* upsf_update_shard(
     upsf_handle_t upsf_handle,

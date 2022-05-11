@@ -136,7 +136,7 @@ int test_session_context(upsf_handle_t upsf_handle) {
     snprintf(session_context.required_service_groups[i].str, sizeof(session_context.required_service_groups[i].str), "rsg%d", i);
   }
   session_context.required_service_groups_size = 4;
-  session_context.context_type = PPPOE;
+  session_context.context_type = UPSF_SESSION_CONTEXT_PPPOE;
   snprintf(session_context.required_qos, sizeof(session_context.required_qos), "required_qos");
   snprintf(session_context.mac_address, sizeof(session_context.mac_address), "aa:aa:aa:aa:aa:aa");
   session_context.s_tag = 50;
