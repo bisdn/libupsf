@@ -62,13 +62,13 @@ int test_lookup(upsf_handle_t upsf_handle) {
   upsf_session_context_t session_context;
   memset(&session_context, 0, sizeof(session_context));
 
-  snprintf(session_context.mac_address, sizeof(session_context.mac_address), "aa:aa:aa:aa:aa:aa");
-  session_context.s_tag = 50;
-  session_context.c_tag = 100;
-  snprintf(session_context.circuit_id, sizeof(session_context.circuit_id), "circuit_id");
-  snprintf(session_context.remote_id, sizeof(session_context.remote_id), "remote_id");
+  const char mac_address[] = "aa:aa:aa:aa:aa:aa";
+  uint16_t s_tag = 50;
+  uint16_t c_tag = 100;
+  const char circuit_id[] = "circuit_id";
+  const char remote_id[] = "remote_id";
 
-  if (upsf_lookup(upsf_handle, &session_context) == NULL) {
+  if (upsf_lookup(upsf_handle, &session_context, mac_address, s_tag, c_tag, circuit_id, remote_id) == NULL) {
     return -1;
   }
   fprintf(stderr, "lookup session_context().id=%s\n", session_context.id);
