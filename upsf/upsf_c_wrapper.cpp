@@ -508,8 +508,8 @@ int upsf_list_shards(upsf_handle_t upsf_handle, upsf_shard_t* elems, size_t n_el
     }
   
     elems[i].ip_prefixes_size = std::min(resp.shard(i).status().ip_prefixes_size(), UPSF_MAX_NUM_IP_PREFIXES);
-    for (int i = 0; i < elems[i].ip_prefixes_size; i++) {
-      strncpy(elems[i].ip_prefixes[i].str, resp.shard(i).status().ip_prefixes(i).c_str(), sizeof(elems[i].ip_prefixes[i].str) - 1); 
+    for (int j = 0; j < elems[i].ip_prefixes_size; j++) {
+      strncpy(elems[i].ip_prefixes[j].str, resp.shard(i).status().ip_prefixes(j).c_str(), sizeof(elems[i].ip_prefixes[j].str) - 1); 
     }
 
   }
@@ -1187,7 +1187,7 @@ int upsf_list_session_contexts(upsf_handle_t upsf_handle, upsf_session_context_t
 /**
  * rpc Lookup (LookupReq) returns (LookupResp) {}
  */
-upsf_session_context_t* upsf_lookup(upsf_handle_t upsf_handle, upsf_session_context_t* session_context) {
+upsf_session_context_t* upsf_lookup(upsf_handle_t upsf_handle, upsf_session_context_t* session_context, const char* mac_address, const uint16_t s_tag, const uint16_t c_tag, const char* circuit_id, const char* remote_id) {
 
   bbf::sss::LookupResp resp;
 
@@ -1208,23 +1208,13 @@ upsf_session_context_t* upsf_lookup(upsf_handle_t upsf_handle, upsf_session_cont
   /* get rw lock on upsf slot */
   std::unique_lock rwlock(slot->mutex);
 
-  std::vector<std::string> req_svc_grp;
-  for (int i = 0; i < session_context->required_service_groups_size; i++) {
-    req_svc_grp.emplace(req_svc_grp.end(), session_context->required_service_groups[i].str);
-  }
-
   /* call upsf client instance */
   if (!slot->client->Lookup(
-    std::string(session_context->tsf),
-    std::string(session_context->desired_shard),
-    req_svc_grp,
-    std::string(session_context->required_qos),
-    (bbf::sss::SessionContext_Spec_ContextType)session_context->context_type,
-    std::string(session_context->mac_address),
-    session_context->s_tag,
-    session_context->c_tag,
-    std::string(session_context->circuit_id),
-    std::string(session_context->remote_id), resp)) {
+    std::string(mac_address),
+    s_tag,
+    c_tag,
+    std::string(circuit_id),
+    std::string(remote_id), resp)) {
     return nullptr;
   }
 
@@ -1252,6 +1242,7 @@ upsf_session_context_t* upsf_lookup(upsf_handle_t upsf_handle, upsf_session_cont
   session_context->c_tag = resp.session_context().spec().session_filter().cvlan();
   strncpy(session_context->circuit_id, resp.session_context().spec().session_filter().circuit_id().c_str(), sizeof(session_context->circuit_id) - 1); 
   strncpy(session_context->remote_id, resp.session_context().spec().session_filter().remote_id().c_str(), sizeof(session_context->remote_id) - 1); 
+  strncpy(session_context->current_shard, resp.session_context().status().current_shard().c_str(), sizeof(session_context->current_shard) - 1); 
 
   return session_context;
 }

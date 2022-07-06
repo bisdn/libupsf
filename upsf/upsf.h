@@ -199,7 +199,12 @@ int upsf_list_session_contexts(
 
 upsf_session_context_t* upsf_lookup(
     upsf_handle_t upsf_handle,
-    upsf_session_context_t* session_context);
+    upsf_session_context_t* session_context,
+    const char* mac_address,
+    const uint16_t s_tag,
+    const uint16_t c_tag,
+    const char* circuit_id,
+    const char* remote_id);
 
 int upsf_subscribe(
     upsf_handle_t upsf_handle,

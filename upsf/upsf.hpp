@@ -1,6 +1,10 @@
 #ifndef UPSF_HPP
 #define UPSF_HPP
 
+#include <mutex>
+#include <shared_mutex>
+#include <thread>
+
 #include <grpc/grpc.h>
 #include <grpcpp/channel.h>
 #include <grpcpp/client_context.h>
@@ -113,6 +117,7 @@ public:
    */
   bool UpdateShard(const bbf::sss::UpdateShardReq &req,
                    bbf::sss::ShardResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->UpdateShard(&context, req, &resp);
@@ -161,6 +166,7 @@ public:
    */
   bool DeleteShard(const bbf::sss::DeleteShardReq &req,
                    bbf::sss::ShardResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->DeleteShard(&context, req, &resp);
@@ -187,6 +193,7 @@ public:
    */
   bool GetShard(const bbf::sss::GetShardReq &req,
 		         bbf::sss::ShardResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->GetShard(&context, req, &resp);
@@ -213,6 +220,7 @@ public:
    */
   bool ListShards(const bbf::sss::ListShardReq &req,
 		         bbf::sss::ListShardResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->ListShards(&context, req, &resp);
@@ -266,6 +274,7 @@ public:
    */
   bool UpdateServiceGateway(const bbf::sss::UpdateServiceGatewayReq &req,
                             bbf::sss::ServiceGatewayResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->UpdateServiceGateway(&context, req, &resp);
@@ -294,6 +303,7 @@ public:
    */
   bool DeleteServiceGateway(const bbf::sss::DeleteServiceGatewayReq &req,
 		            bbf::sss::ServiceGatewayResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->DeleteServiceGateway(&context, req, &resp);
@@ -320,6 +330,7 @@ public:
    */
   bool GetServiceGateway(const bbf::sss::GetServiceGatewayReq &req,
 		         bbf::sss::ServiceGatewayResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->GetServiceGateway(&context, req, &resp);
@@ -346,6 +357,7 @@ public:
    */
   bool ListServiceGateways(const bbf::sss::ListServiceGatewayReq &req,
 		         bbf::sss::ListServiceGatewayResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->ListServiceGateways(&context, req, &resp);
@@ -399,6 +411,7 @@ public:
    */
   bool UpdateServiceGatewayUserPlane(const bbf::sss::UpdateServiceGatewayUserPlaneReq &req,
                                      bbf::sss::ServiceGatewayUserPlaneResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->UpdateServiceGatewayUserPlane(&context, req, &resp);
@@ -443,6 +456,7 @@ public:
    */
   bool DeleteServiceGatewayUserPlane(const bbf::sss::DeleteServiceGatewayUserPlaneReq &req,
 		                     bbf::sss::ServiceGatewayUserPlaneResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->DeleteServiceGatewayUserPlane(&context, req, &resp);
@@ -469,6 +483,7 @@ public:
    */
   bool GetServiceGatewayUserPlane(const bbf::sss::GetServiceGatewayUserPlaneReq &req,
 	                          bbf::sss::ServiceGatewayUserPlaneResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->GetServiceGatewayUserPlane(&context, req, &resp);
@@ -495,6 +510,7 @@ public:
    */
   bool ListServiceGatewayUserPlanes(const bbf::sss::ListServiceGatewayUserPlaneReq &req,
 		                    bbf::sss::ListServiceGatewayUserPlaneResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->ListServiceGatewayUserPlanes(&context, req, &resp);
@@ -548,6 +564,7 @@ public:
    */
   bool UpdateSessionContext(const bbf::sss::UpdateSessionContextReq &req,
                             bbf::sss::SessionContextResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->UpdateSessionContext(&context, req, &resp);
@@ -591,6 +608,7 @@ public:
     req.mutable_session_context()->mutable_spec()->mutable_session_filter()->set_cvlan(c_tag);
     req.mutable_session_context()->mutable_spec()->mutable_session_filter()->set_circuit_id(circuit_id);
     req.mutable_session_context()->mutable_spec()->mutable_session_filter()->set_remote_id(remote_id);
+    req.mutable_session_context()->mutable_status()->set_current_shard(current_shard);
     return UpdateSessionContext(req, resp);
   };
 
@@ -599,6 +617,7 @@ public:
    */
   bool DeleteSessionContext(const bbf::sss::DeleteSessionContextReq &req,
 		            bbf::sss::SessionContextResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->DeleteSessionContext(&context, req, &resp);
@@ -625,6 +644,7 @@ public:
    */
   bool GetSessionContext(const bbf::sss::GetSessionContextReq &req,
 		         bbf::sss::SessionContextResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->GetSessionContext(&context, req, &resp);
@@ -651,6 +671,7 @@ public:
    */
   bool ListSessionContexts(const bbf::sss::ListSessionContextReq &req,
 		         bbf::sss::ListSessionContextResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->ListSessionContexts(&context, req, &resp);
@@ -689,6 +710,7 @@ public:
    * rpc ListSessionContexts (ListSessionContextReq) returns (ListSessionContextResp) {}
    */
   bool ListSessionContexts(bbf::sss::ListSessionContextResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     bbf::sss::ListSessionContextReq req;
     return ListSessionContexts(req, resp);
@@ -703,6 +725,7 @@ public:
    */
   bool Lookup(const bbf::sss::LookupReq &req,
               bbf::sss::LookupResp &resp) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->Lookup(&context, req, &resp);
@@ -716,12 +739,7 @@ public:
   /**
    * rpc Lookup (LookupReq) returns (LookupResp) {}
    */
-  bool Lookup(const std::string &tsf,
-              const std::string &desired_shard,
-              const std::vector<std::string> &required_service_group,
-              const std::string &required_qos,
-              const bbf::sss::SessionContext_Spec_ContextType &context_type,
-              const std::string &mac_address,
+  bool Lookup(const std::string &mac_address,
               const uint16_t s_tag,
               const uint16_t c_tag,
               const std::string &circuit_id,
@@ -729,13 +747,6 @@ public:
               bbf::sss::LookupResp &resp) {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     bbf::sss::LookupReq req;
-    req.mutable_spec()->set_traffic_steering_function(tsf);
-    req.mutable_spec()->set_desired_shard(desired_shard);
-    for (auto it : required_service_group) {
-      req.mutable_spec()->add_required_service_group(it);
-    }
-    req.mutable_spec()->set_required_qos(required_qos);
-    req.mutable_spec()->set_context_type(context_type);
     req.mutable_spec()->mutable_session_filter()->set_mac_address(mac_address);
     req.mutable_spec()->mutable_session_filter()->set_svlan(s_tag);
     req.mutable_spec()->mutable_session_filter()->set_cvlan(c_tag);
@@ -749,6 +760,7 @@ public:
    ****************************************/
 
   bool Subscribe(UpsfSubscriber &subscriber) {
+    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     bbf::sss::SubscribeReq req;
     bbf::sss::Update resp;
@@ -806,11 +818,8 @@ public:
     return true;
   };
 
-
-
-
-
 private:
+  mutable std::shared_mutex mutex_;
   std::shared_ptr<grpc::Channel> channel;
   std::unique_ptr<bbf::sss::sssUpsf::Stub> stub_;
 };
