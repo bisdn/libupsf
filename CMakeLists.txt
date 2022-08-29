@@ -7,5 +7,4 @@ project (upsf
   )
 
 add_subdirectory (upsf)
-add_subdirectory (upsf_test_c)
-add_subdirectory (upsf_test_cpp)
+add_subdirectory (examples)

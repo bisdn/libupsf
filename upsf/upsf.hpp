@@ -12,7 +12,10 @@
 #include <grpcpp/security/credentials.h>
 #include <glog/logging.h>
 
-#include "sssupsf.grpc.pb.h"
+#include "wt474_upsf_messages/v1/messages_v1.pb.h"
+#include "wt474_upsf_messages/v1/messages_v1.grpc.pb.h"
+#include "wt474_upsf_service/v1/service_v1.pb.h"
+#include "wt474_upsf_service/v1/service_v1.grpc.pb.h"
 
 namespace upsf {
 
@@ -22,74 +25,121 @@ public:
   /**
    * constructor
    */
-  UpsfSubscriber() {
-      subscriptions.emplace(subscriptions.end(), bbf::sss::SubscribeReq::SubscriptionType::SubscribeReq_SubscriptionType_shards);
-      subscriptions.emplace(subscriptions.end(), bbf::sss::SubscribeReq::SubscriptionType::SubscribeReq_SubscriptionType_session_contexts);
-      subscriptions.emplace(subscriptions.end(), bbf::sss::SubscribeReq::SubscriptionType::SubscribeReq_SubscriptionType_network_connections);
-      subscriptions.emplace(subscriptions.end(), bbf::sss::SubscribeReq::SubscriptionType::SubscribeReq_SubscriptionType_service_gateway_user_planes);
-      subscriptions.emplace(subscriptions.end(), bbf::sss::SubscribeReq::SubscriptionType::SubscribeReq_SubscriptionType_traffic_steering_functions);
-      subscriptions.emplace(subscriptions.end(), bbf::sss::SubscribeReq::SubscriptionType::SubscribeReq_SubscriptionType_service_gateways);
-  }
+  UpsfSubscriber(
+    bool watch = false) :
+      watch(watch)
+  {
+      /* get all items */
+      itemtypes.emplace(itemtypes.end(), wt474_upsf_service::v1::ItemType::service_gateway);
+      itemtypes.emplace(itemtypes.end(), wt474_upsf_service::v1::ItemType::service_gateway_user_plane);
+      itemtypes.emplace(itemtypes.end(), wt474_upsf_service::v1::ItemType::traffic_steering_function);
+      itemtypes.emplace(itemtypes.end(), wt474_upsf_service::v1::ItemType::network_connection);
+      itemtypes.emplace(itemtypes.end(), wt474_upsf_service::v1::ItemType::shard);
+      itemtypes.emplace(itemtypes.end(), wt474_upsf_service::v1::ItemType::session_context);
+      /* in all states */
+      derivedstates.emplace(derivedstates.end(), wt474_messages::v1::DerivedState::unknown);
+      derivedstates.emplace(derivedstates.end(), wt474_messages::v1::DerivedState::inactive);
+      derivedstates.emplace(derivedstates.end(), wt474_messages::v1::DerivedState::active);
+      derivedstates.emplace(derivedstates.end(), wt474_messages::v1::DerivedState::updating);
+  };
 
   /**
    * constructor
    */
-  UpsfSubscriber(const std::vector<bbf::sss::SubscribeReq::SubscriptionType> &subscriptions) 
-      : subscriptions(subscriptions) {}
+  UpsfSubscriber(
+    const std::vector<wt474_upsf_service::v1::ItemType> &itemtypes,
+    bool watch = false) :
+      itemtypes(itemtypes),
+      watch(watch)
+  {};
+
+  /**
+   * constructor
+   */
+  UpsfSubscriber(
+    const std::vector<wt474_messages::v1::DerivedState> &derivedstates,
+    bool watch = false) :
+      derivedstates(derivedstates),
+      watch(watch)
+  {};
+
+  /**
+   * constructor
+   */
+  UpsfSubscriber(
+    const std::vector<wt474_upsf_service::v1::ItemType> &itemtypes,
+    const std::vector<wt474_messages::v1::DerivedState> &derivedstates,
+    const std::vector<std::string> &parents,
+    const std::vector<std::string> &names,
+    bool watch = false) :
+      itemtypes(itemtypes),
+      derivedstates(derivedstates),
+      parents(parents),
+      names(names),
+      watch(watch)
+  {};
 
   /**
    * destructor
    */
-  virtual ~UpsfSubscriber() {}
+  virtual ~UpsfSubscriber()
+  {};
+
+public:
+
+  virtual void notify(
+    const wt474_messages::v1::Shard& shard)
+  {};
+
+  virtual void notify(
+    const wt474_messages::v1::SessionContext& session_context)
+  {};
+
+  virtual void notify(
+    const wt474_messages::v1::NetworkConnection& network_connection)
+  {};
+
+  virtual void notify(
+    const wt474_messages::v1::ServiceGatewayUserPlane& service_gateway_user_plane)
+  {};
+
+  virtual void notify(
+    const wt474_messages::v1::TrafficSteeringFunction& traffic_steering_function)
+  {};
+
+  virtual void notify(
+    const wt474_messages::v1::ServiceGateway& service_gateway)
+  {};
 
 public:
 
   /**
-   * returns false for terminating subscription loop
+   *
    */
-  virtual bool update(const bbf::sss::Shard &shard) {
-    return true;
-  };
+  bool get_watch() const {
+    return watch;
+  }
 
   /**
-   * returns false for terminating subscription loop
+   *
    */
-  virtual bool update(const bbf::sss::SessionContext &session_context) {
-    return true;
-  };
-
-  /**
-   * returns false for terminating subscription loop
-   */
-  virtual bool update(const bbf::sss::NetworkConnection &network_connection) {
-    return true;
-  };
-
-  /**
-   * returns false for terminating subscription loop
-   */
-  virtual bool update(const bbf::sss::ServiceGatewayUserPlane &service_gateway_user_plane) {
-    return true;
-  };
-
-  /**
-   * returns false for terminating subscription loop
-   */
-  virtual bool update(const bbf::sss::TrafficSteeringFunction &traffic_steering_function) {
-    return true;
-  };
-
-  /**
-   * returns false for terminating subscription loop
-   */
-  virtual bool update(const bbf::sss::ServiceGateway &service_gateway) {
-    return true;
+  UpsfSubscriber&
+  set_watch(bool watch) {
+    this->watch = watch; return *this;
   };
 
 public:
 
-  // subscription types
-  std::vector<bbf::sss::SubscribeReq::SubscriptionType> subscriptions;
+  // item types
+  std::vector<wt474_upsf_service::v1::ItemType> itemtypes;
+  // derived states
+  std::vector<wt474_messages::v1::DerivedState> derivedstates;
+  // item parents
+  std::vector<std::string> parents;
+  // item names
+  std::vector<std::string> names;
+  // watch
+  bool watch;
 };
 
 class UpsfClient {
@@ -98,29 +148,35 @@ public:
   /**
    * constructor
    */
-  UpsfClient(std::shared_ptr<grpc::Channel> channel)
-      : channel(channel), stub_(bbf::sss::sssUpsf::NewStub(channel)) {}
+  UpsfClient(
+    std::shared_ptr<grpc::Channel> channel) :
+      channel(channel),
+      stub_(wt474_upsf_service::v1::upsf::NewStub(channel))
+  {};
 
   /**
    * destructor
    */
-  virtual ~UpsfClient() {}
+  virtual ~UpsfClient()
+  {};
 
 public:
 
   /****************************************
-   * Shard
+   * CreateV1
    ****************************************/
 
   /**
-   * rpc UpdateShard (UpdateShardReq) returns (ShardResp) {}
+   * rpc CreateV1 (wt474_upsf_messages/v1/Item) returns (wt474_messages/v1/Item) {}
    */
-  bool UpdateShard(const bbf::sss::UpdateShardReq &req,
-                   bbf::sss::ShardResp &resp) {
+  bool CreateV1(
+    const wt474_messages::v1::Item &request,
+    wt474_messages::v1::Item &reply)
+  {
     std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
-    grpc::Status status = stub_->UpdateShard(&context, req, &resp);
+    grpc::Status status = stub_->CreateV1(&context, request, &reply);
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
       return false;
@@ -129,606 +185,116 @@ public:
   };
 
   /**
-   * rpc UpdateShard (UpdateShardReq) returns (ShardResp) {}
+   * rpc CreateV1 (wt474_upsf_messages/v1/Shard) returns (wt474_upsf_messages/v1/Shard) {}
    */
-  bool UpdateShard(const std::string &name,
-                   const bbf::sss::ItemStatus &item_status,
-                   int max_session_count,
-                   const std::string &desired_service_gateway_user_plane,
-                   const std::vector<std::string> &desired_network_connection,
-                   const std::string &required_qos,
-                   const std::string &current_service_gateway_user_plane,
-                   const std::map<std::string, std::string> &tsf_network_connection,
-                   const std::vector<std::string> &ip_prefixes,
-                   bbf::sss::ShardResp &resp) {
+  bool CreateV1(
+    const wt474_messages::v1::Shard& request,
+    wt474_messages::v1::Shard& reply)
+  {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::UpdateShardReq req;
-    req.mutable_shard()->mutable_metadata()->set_name(name);
-    req.mutable_shard()->mutable_metadata()->set_item_status(item_status);
-    req.mutable_shard()->mutable_spec()->set_desired_service_gateway_user_plane(desired_service_gateway_user_plane);
-    for (auto it : desired_network_connection) {
-      req.mutable_shard()->mutable_spec()->add_desired_network_connection(it);
-    }
-    req.mutable_shard()->mutable_spec()->set_required_qos(required_qos);
-    req.mutable_shard()->mutable_spec()->set_max_session_count(max_session_count);
-    req.mutable_shard()->mutable_status()->set_current_service_gateway_user_plane(current_service_gateway_user_plane);
-    for (auto it : tsf_network_connection) {
-      req.mutable_shard()->mutable_status()->mutable_tsf_network_connection()->insert(google::protobuf::MapPair<std::string, std::string>(it.first, it.second));
-    }
-    for (auto it : ip_prefixes) {
-      req.mutable_shard()->mutable_status()->add_ip_prefixes(it);
-    }
-    return UpdateShard(req, resp);
+    wt474_messages::v1::Item item_q;
+    wt474_messages::v1::Item item_p;
+    *item_q.mutable_shard() = request;
+    bool result = CreateV1(item_q, item_p);
+    reply = item_p.shard();
+    return result;
   };
 
   /**
-   * rpc DeleteShard (DeleteShardReq) returns (ShardResp) {}
+   * rpc CreateV1 (wt474_upsf_messages/v1/SessionContext) returns (wt474_upsf_messages/v1/SessionContext) {}
    */
-  bool DeleteShard(const bbf::sss::DeleteShardReq &req,
-                   bbf::sss::ShardResp &resp) {
-    std::unique_lock lock(mutex_);
+  bool CreateV1(
+    const wt474_messages::v1::SessionContext& request,
+    wt474_messages::v1::SessionContext& reply)
+  {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->DeleteShard(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
+    wt474_messages::v1::Item item_q;
+    wt474_messages::v1::Item item_p;
+    *item_q.mutable_session_context() = request;
+    bool result = CreateV1(item_q, item_p);
+    reply = item_p.session_context();
+    return result;
   };
 
   /**
-   * rpc DeleteShard (DeleteShardReq) returns (ShardResp) {}
+   * rpc CreateV1 (wt474_upsf_messages/v1/NetworkConnection) returns (wt474_upsf_messages/v1/NetworkConnection) {}
    */
-  bool DeleteShard(const std::string &id,
-                   bbf::sss::ShardResp &resp) {
+  bool CreateV1(
+    const wt474_messages::v1::NetworkConnection& request,
+    wt474_messages::v1::NetworkConnection& reply)
+  {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::DeleteShardReq req;
-    req.set_id(id);
-    return DeleteShard(req, resp);
+    wt474_messages::v1::Item item_q;
+    wt474_messages::v1::Item item_p;
+    *item_q.mutable_network_connection() = request;
+    bool result = CreateV1(item_q, item_p);
+    reply = item_p.network_connection();
+    return result;
   };
 
   /**
-   * rpc GetShard (GetShardReq) returns (ShardResp) {}
+   * rpc CreateV1 (wt474_upsf_messages/v1/ServiceGatewayUserPlane) returns (wt474_upsf_messages/v1/ServiceGatewayUserPlane) {}
    */
-  bool GetShard(const bbf::sss::GetShardReq &req,
-		         bbf::sss::ShardResp &resp) {
-    std::unique_lock lock(mutex_);
+  bool CreateV1(
+    const wt474_messages::v1::ServiceGatewayUserPlane& request,
+    wt474_messages::v1::ServiceGatewayUserPlane& reply)
+  {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->GetShard(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
+    wt474_messages::v1::Item item_q;
+    wt474_messages::v1::Item item_p;
+    *item_q.mutable_service_gateway_user_plane() = request;
+    bool result = CreateV1(item_q, item_p);
+    reply = item_p.service_gateway_user_plane();
+    return result;
   };
 
   /**
-   * rpc GetShard (GetShardReq) returns (ShardResp) {}
+   * rpc CreateV1 (wt474_upsf_messages/v1/ServiceGatewayUserPlane) returns (wt474_upsf_messages/v1/ServiceGatewayUserPlane) {}
    */
-  bool GetShard(const std::string &id,
-		         bbf::sss::ShardResp &resp) {
+  bool CreateV1(
+    const wt474_messages::v1::TrafficSteeringFunction& request,
+    wt474_messages::v1::TrafficSteeringFunction& reply)
+  {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::GetShardReq req;
-    req.set_id(id);
-    return GetShard(req, resp);
+    wt474_messages::v1::Item item_q;
+    wt474_messages::v1::Item item_p;
+    *item_q.mutable_traffic_steering_function() = request;
+    bool result = CreateV1(item_q, item_p);
+    reply = item_p.traffic_steering_function();
+    return result;
   };
 
   /**
-   * rpc ListShards (ListShardReq) returns (ListShardResp) {}
+   * rpc CreateV1 (wt474_upsf_messages/v1/ServiceGateway) returns (wt474_upsf_messages/v1/ServiceGateway) {}
    */
-  bool ListShards(const bbf::sss::ListShardReq &req,
-		         bbf::sss::ListShardResp &resp) {
-    std::unique_lock lock(mutex_);
+  bool CreateV1(
+    const wt474_messages::v1::ServiceGateway& request,
+    wt474_messages::v1::ServiceGateway& reply)
+  {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->ListShards(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc ListShards (ListShardReq) returns (ListShardResp) {}
-   */
-  bool ListShards(const std::vector<std::string> &id_list,
-		         bbf::sss::ListShardResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListShardReq req;
-    for (auto it : id_list) {
-        req.mutable_filter()->add_id_list(it);
-    }
-    return ListShards(req, resp);
-  };
-
-  /**
-   * rpc ListShards (ListShardReq) returns (ListShardResp) {}
-   */
-  bool ListShards(const std::string& id,
-		         bbf::sss::ListShardResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListShardReq req;
-    req.mutable_filter()->add_id_list(id);
-    return ListShards(req, resp);
-  };
-
-  /**
-   * rpc ListShards (ListShardReq) returns (ListShardResp) {}
-   */
-  bool ListShards(bbf::sss::ListShardResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListShardReq req;
-    return ListShards(req, resp);
-  };
-
-
-  /****************************************
-   * ServiceGateway
-   ****************************************/
-
-  /**
-   * rpc UpdateServiceGateway (UpdateServiceGatewayReq) returns (ServiceGatewayResp) {}
-   */
-  bool UpdateServiceGateway(const bbf::sss::UpdateServiceGatewayReq &req,
-                            bbf::sss::ServiceGatewayResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->UpdateServiceGateway(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc UpdateServiceGateway (UpdateServiceGatewayReq) returns (ServiceGatewayResp) {}
-   */
-  bool UpdateServiceGateway(const std::string &name,
-                            const bbf::sss::ItemStatus &item_status,
-                            bbf::sss::ServiceGatewayResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::UpdateServiceGatewayReq req;
-    req.mutable_service_gateway()->mutable_metadata()->set_name(name);
-    req.mutable_service_gateway()->mutable_metadata()->set_item_status(item_status);
-    return UpdateServiceGateway(req, resp);
-  };
-
-  /**
-   * rpc DeleteServiceGateway (DeleteServiceGatewayReq) returns (ServiceGatewayResp) {}
-   */
-  bool DeleteServiceGateway(const bbf::sss::DeleteServiceGatewayReq &req,
-		            bbf::sss::ServiceGatewayResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->DeleteServiceGateway(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc DeleteServiceGateway (DeleteServiceGatewayReq) returns (ServiceGatewayResp) {}
-   */
-  bool DeleteServiceGateway(const std::string &id,
-                            bbf::sss::ServiceGatewayResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::DeleteServiceGatewayReq req;
-    req.set_id(id);
-    return DeleteServiceGateway(req, resp);
-  };
-
-  /**
-   * rpc GetServiceGateway (GetServiceGatewayReq) returns (ServiceGatewayResp) {}
-   */
-  bool GetServiceGateway(const bbf::sss::GetServiceGatewayReq &req,
-		         bbf::sss::ServiceGatewayResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->GetServiceGateway(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc GetServiceGateway (GetServiceGatewayReq) returns (ServiceGatewayResp) {}
-   */
-  bool GetServiceGateway(const std::string &id,
-		         bbf::sss::ServiceGatewayResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::GetServiceGatewayReq req;
-    req.set_id(id);
-    return GetServiceGateway(req, resp);
-  };
-
-  /**
-   * rpc ListServiceGateways (ListServiceGatewayReq) returns (ListServiceGatewayResp) {}
-   */
-  bool ListServiceGateways(const bbf::sss::ListServiceGatewayReq &req,
-		         bbf::sss::ListServiceGatewayResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->ListServiceGateways(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc ListServiceGateways (ListServiceGatewayReq) returns (ListServiceGatewayResp) {}
-   */
-  bool ListServiceGateways(const std::vector<std::string> &id_list,
-		         bbf::sss::ListServiceGatewayResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListServiceGatewayReq req;
-    for (auto it : id_list) {
-        req.mutable_filter()->add_id_list(it);
-    }
-    return ListServiceGateways(req, resp);
-  };
-
-  /**
-   * rpc ListServiceGateways (ListServiceGatewayReq) returns (ListServiceGatewayResp) {}
-   */
-  bool ListServiceGateways(const std::string& id,
-		         bbf::sss::ListServiceGatewayResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListServiceGatewayReq req;
-    req.mutable_filter()->add_id_list(id);
-    return ListServiceGateways(req, resp);
-  };
-
-  /**
-   * rpc ListServiceGateways (ListServiceGatewayReq) returns (ListServiceGatewayResp) {}
-   */
-  bool ListServiceGateways(bbf::sss::ListServiceGatewayResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListServiceGatewayReq req;
-    return ListServiceGateways(req, resp);
-  };
-
-
-  /****************************************
-   * ServiceGatewayUserPlane
-   ****************************************/
-
-  /**
-   * rpc UpdateServiceGatewayUserPlane (UpdateServiceGatewayUserPlaneReq) returns (ServiceGatewayUserPlaneResp) {}
-   */
-  bool UpdateServiceGatewayUserPlane(const bbf::sss::UpdateServiceGatewayUserPlaneReq &req,
-                                     bbf::sss::ServiceGatewayUserPlaneResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->UpdateServiceGatewayUserPlane(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc UpdateServiceGatewayUserPlane (UpdateServiceGatewayUserPlaneReq) returns (ServiceGatewayUserPlaneResp) {}
-   */
-  bool UpdateServiceGatewayUserPlane(const std::string &name,
-                                     const bbf::sss::ItemStatus &item_status,
-                                     const std::string &service_gateway_id,
-                                     int32_t max_session_count,
-                                     const std::vector<std::string> &supported_service_groups,
-                                     bool maintenance,
-                                     int32_t allocated_session_count,
-                                     const std::vector<int32_t> &network_connection,
-                                     bbf::sss::ServiceGatewayUserPlaneResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::UpdateServiceGatewayUserPlaneReq req;
-    req.mutable_service_gateway_user_plane()->mutable_metadata()->set_name(name);
-    req.mutable_service_gateway_user_plane()->mutable_metadata()->set_item_status(item_status);
-    req.mutable_service_gateway_user_plane()->set_service_gateway_id(service_gateway_id);
-    req.mutable_service_gateway_user_plane()->mutable_spec()->set_max_session_count(max_session_count);
-    for (auto it : supported_service_groups) {
-      req.mutable_service_gateway_user_plane()->mutable_spec()->add_supported_service_group(it);
-    }
-    req.mutable_service_gateway_user_plane()->mutable_spec()->set_maintenence(maintenance);
-    req.mutable_service_gateway_user_plane()->mutable_status()->set_allocated_session_count(allocated_session_count);
-    for (auto it : network_connection) {
-      req.mutable_service_gateway_user_plane()->mutable_status()->add_network_connection(it);
-    }
-    return UpdateServiceGatewayUserPlane(req, resp);
-  };
-
-  /**
-   * rpc DeleteServiceGatewayUserPlane (DeleteServiceGatewayUserPlaneReq) returns (ServiceGatewayUserPlaneResp) {}
-   */
-  bool DeleteServiceGatewayUserPlane(const bbf::sss::DeleteServiceGatewayUserPlaneReq &req,
-		                     bbf::sss::ServiceGatewayUserPlaneResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->DeleteServiceGatewayUserPlane(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc DeleteServiceGatewayUserPlane (DeleteServiceGatewayUserPlaneReq) returns (ServiceGatewayUserPlaneResp) {}
-   */
-  bool DeleteServiceGatewayUserPlane(const std::string &id,
-                                     bbf::sss::ServiceGatewayUserPlaneResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::DeleteServiceGatewayUserPlaneReq req;
-    req.set_id(id);
-    return DeleteServiceGatewayUserPlane(req, resp);
-  };
-
-  /**
-   * rpc GetServiceGatewayUserPlane (GetServiceGatewayUserPlaneReq) returns (ServiceGatewayUserPlaneResp) {}
-   */
-  bool GetServiceGatewayUserPlane(const bbf::sss::GetServiceGatewayUserPlaneReq &req,
-	                          bbf::sss::ServiceGatewayUserPlaneResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->GetServiceGatewayUserPlane(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc GetServiceGatewayUserPlane (GetServiceGatewayUserPlaneReq) returns (ServiceGatewayUserPlaneResp) {}
-   */
-  bool GetServiceGatewayUserPlane(const std::string &id,
-		                  bbf::sss::ServiceGatewayUserPlaneResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::GetServiceGatewayUserPlaneReq req;
-    req.set_id(id);
-    return GetServiceGatewayUserPlane(req, resp);
-  };
-
-  /**
-   * rpc ListServiceGatewayUserPlanes (ListServiceGatewayUserPlaneReq) returns (ListServiceGatewayUserPlaneResp) {}
-   */
-  bool ListServiceGatewayUserPlanes(const bbf::sss::ListServiceGatewayUserPlaneReq &req,
-		                    bbf::sss::ListServiceGatewayUserPlaneResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->ListServiceGatewayUserPlanes(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc ListServiceGatewayUserPlanes (ListServiceGatewayUserPlaneReq) returns (ListServiceGatewayUserPlaneResp) {}
-   */
-  bool ListServiceGatewayUserPlanes(const std::vector<std::string> &id_list,
-		         bbf::sss::ListServiceGatewayUserPlaneResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListServiceGatewayUserPlaneReq req;
-    for (auto it : id_list) {
-        req.mutable_filter()->add_id_list(it);
-    }
-    return ListServiceGatewayUserPlanes(req, resp);
-  };
-
-  /**
-   * rpc ListServiceGatewayUserPlanes (ListServiceGatewayUserPlaneReq) returns (ListServiceGatewayUserPlaneResp) {}
-   */
-  bool ListServiceGatewayUserPlanes(const std::string& id,
-		         bbf::sss::ListServiceGatewayUserPlaneResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListServiceGatewayUserPlaneReq req;
-    req.mutable_filter()->add_id_list(id);
-    return ListServiceGatewayUserPlanes(req, resp);
-  };
-
-  /**
-   * rpc ListServiceGatewayUserPlanes (ListServiceGatewayUserPlaneReq) returns (ListServiceGatewayUserPlaneResp) {}
-   */
-  bool ListServiceGatewayUserPlanes(bbf::sss::ListServiceGatewayUserPlaneResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListServiceGatewayUserPlaneReq req;
-    return ListServiceGatewayUserPlanes(req, resp);
-  };
-
-
-  /****************************************
-   * SessionContext
-   ****************************************/
-
-  /**
-   * rpc UpdateSessionContext (UpdateSessionContextReq) returns (SessionContextResp) {}
-   */
-  bool UpdateSessionContext(const bbf::sss::UpdateSessionContextReq &req,
-                            bbf::sss::SessionContextResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->UpdateSessionContext(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc UpdateSessionContext (UpdateSessionContextReq) returns (SessionContextResp) {}
-   */
-  bool UpdateSessionContext(const std::string &name,
-                            const bbf::sss::ItemStatus &item_status,
-                            const std::string &tsf,
-                            const std::string &desired_shard,
-                            const std::string &current_shard,
-                            const std::vector<std::string> &required_service_group,
-                            const std::string &required_qos,
-                            const bbf::sss::SessionContext_Spec_ContextType &context_type,
-                            const std::string &mac_address,
-                            const uint16_t s_tag,
-                            const uint16_t c_tag,
-                            const std::string &circuit_id,
-                            const std::string &remote_id,
-                            bbf::sss::SessionContextResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::UpdateSessionContextReq req;
-    req.mutable_session_context()->mutable_metadata()->set_name(name);
-    req.mutable_session_context()->mutable_metadata()->set_item_status(item_status);
-    req.mutable_session_context()->mutable_spec()->set_traffic_steering_function(tsf);
-    req.mutable_session_context()->mutable_spec()->set_desired_shard(desired_shard);
-    for (auto it : required_service_group) {
-      req.mutable_session_context()->mutable_spec()->add_required_service_group(it);
-    }
-    req.mutable_session_context()->mutable_spec()->set_required_qos(required_qos);
-    req.mutable_session_context()->mutable_spec()->set_context_type(context_type);
-    req.mutable_session_context()->mutable_spec()->mutable_session_filter()->set_mac_address(mac_address);
-    req.mutable_session_context()->mutable_spec()->mutable_session_filter()->set_svlan(s_tag);
-    req.mutable_session_context()->mutable_spec()->mutable_session_filter()->set_cvlan(c_tag);
-    req.mutable_session_context()->mutable_spec()->mutable_session_filter()->set_circuit_id(circuit_id);
-    req.mutable_session_context()->mutable_spec()->mutable_session_filter()->set_remote_id(remote_id);
-    req.mutable_session_context()->mutable_status()->set_current_shard(current_shard);
-    return UpdateSessionContext(req, resp);
-  };
-
-  /**
-   * rpc DeleteSessionContext (DeleteSessionContextReq) returns (SessionContextResp) {}
-   */
-  bool DeleteSessionContext(const bbf::sss::DeleteSessionContextReq &req,
-		            bbf::sss::SessionContextResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->DeleteSessionContext(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc DeleteSessionContext (DeleteSessionContextReq) returns (SessionContextResp) {}
-   */
-  bool DeleteSessionContext(const std::string &id,
-                            bbf::sss::SessionContextResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::DeleteSessionContextReq req;
-    req.set_id(id);
-    return DeleteSessionContext(req, resp);
-  };
-
-  /**
-   * rpc GetSessionContext (GetSessionContextReq) returns (SessionContextResp) {}
-   */
-  bool GetSessionContext(const bbf::sss::GetSessionContextReq &req,
-		         bbf::sss::SessionContextResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->GetSessionContext(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc GetSessionContext (GetSessionContextReq) returns (SessionContextResp) {}
-   */
-  bool GetSessionContext(const std::string &id,
-		         bbf::sss::SessionContextResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::GetSessionContextReq req;
-    req.set_id(id);
-    return GetSessionContext(req, resp);
-  };
-
-  /**
-   * rpc ListSessionContexts (ListSessionContextReq) returns (ListSessionContextResp) {}
-   */
-  bool ListSessionContexts(const bbf::sss::ListSessionContextReq &req,
-		         bbf::sss::ListSessionContextResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    grpc::ClientContext context;
-    grpc::Status status = stub_->ListSessionContexts(&context, req, &resp);
-    if (!status.ok()) {
-      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * rpc ListSessionContexts (ListSessionContextReq) returns (ListSessionContextResp) {}
-   */
-  bool ListSessionContexts(const std::vector<std::string> &id_list,
-		         bbf::sss::ListSessionContextResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListSessionContextReq req;
-    for (auto it : id_list) {
-        req.mutable_filter()->add_id_list(it);
-    }
-    return ListSessionContexts(req, resp);
-  };
-
-  /**
-   * rpc ListSessionContexts (ListSessionContextReq) returns (ListSessionContextResp) {}
-   */
-  bool ListSessionContexts(const std::string& id,
-		         bbf::sss::ListSessionContextResp &resp) {
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListSessionContextReq req;
-    req.mutable_filter()->add_id_list(id);
-    return ListSessionContexts(req, resp);
-  };
-
-  /**
-   * rpc ListSessionContexts (ListSessionContextReq) returns (ListSessionContextResp) {}
-   */
-  bool ListSessionContexts(bbf::sss::ListSessionContextResp &resp) {
-    std::unique_lock lock(mutex_);
-    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::ListSessionContextReq req;
-    return ListSessionContexts(req, resp);
+    wt474_messages::v1::Item item_q;
+    wt474_messages::v1::Item item_p;
+    *item_q.mutable_service_gateway() = request;
+    bool result = CreateV1(item_q, item_p);
+    reply = item_p.service_gateway();
+    return result;
   };
 
   /****************************************
-   * Lookup
+   * UpdateV1
    ****************************************/
 
   /**
-   * rpc Lookup (LookupReq) returns (LookupResp) {}
+   * rpc UpdateV1 (wt474_upsf_messages/v1/Item) returns (wt474_messages/v1/Item) {}
    */
-  bool Lookup(const bbf::sss::LookupReq &req,
-              bbf::sss::LookupResp &resp) {
+  bool UpdateV1(
+    const wt474_upsf_service::v1::UpdateReq &req,
+    wt474_messages::v1::Item &resp)
+  {
     std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
-    grpc::Status status = stub_->Lookup(&context, req, &resp);
+    grpc::Status status = stub_->UpdateV1(&context, req, &resp);
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
       return false;
@@ -737,76 +303,225 @@ public:
   };
 
   /**
-   * rpc Lookup (LookupReq) returns (LookupResp) {}
+   * rpc UpdateV1 (wt474_upsf_messages/v1/Shard) returns (wt474_upsf_messages/v1/Shard) {}
    */
-  bool Lookup(const std::string &mac_address,
-              const uint16_t s_tag,
-              const uint16_t c_tag,
-              const std::string &circuit_id,
-              const std::string &remote_id,
-              bbf::sss::LookupResp &resp) {
+  bool UpdateV1(
+    wt474_messages::v1::Shard &shard,
+    wt474_messages::v1::Shard &reply,
+    wt474_upsf_service::v1::UpdateReq::UpdateOptions& options)
+  {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::LookupReq req;
-    req.mutable_spec()->mutable_session_filter()->set_mac_address(mac_address);
-    req.mutable_spec()->mutable_session_filter()->set_svlan(s_tag);
-    req.mutable_spec()->mutable_session_filter()->set_cvlan(c_tag);
-    req.mutable_spec()->mutable_session_filter()->set_circuit_id(circuit_id);
-    req.mutable_spec()->mutable_session_filter()->set_remote_id(remote_id);
-    return Lookup(req, resp);
+    wt474_upsf_service::v1::UpdateReq req;
+    wt474_messages::v1::Item item;
+    *req.mutable_item()->mutable_shard() = shard;
+    *req.mutable_update_options() = options;
+    bool success = UpdateV1(req, item);
+    if (!success) {
+      return false;
+    }
+    reply = item.shard();
+    return success;
+  };
+
+  /**
+   * rpc UpdateV1 (wt474_upsf_messages/v1/SessionContext) returns (wt474_upsf_messages/v1/SessionContext) {}
+   */
+  bool UpdateV1(
+    wt474_messages::v1::SessionContext &session_context,
+    wt474_messages::v1::SessionContext &reply,
+    wt474_upsf_service::v1::UpdateReq::UpdateOptions& options)
+  {
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::UpdateReq req;
+    wt474_messages::v1::Item item;
+    *req.mutable_item()->mutable_session_context() = session_context;
+    *req.mutable_update_options() = options;
+    bool success = UpdateV1(req, item);
+    if (!success) {
+      return false;
+    }
+    reply = item.session_context();
+    return success;
+  };
+
+  /**
+   * rpc UpdateV1 (wt474_upsf_messages/v1/NetworkConnection) returns (wt474_upsf_messages/v1/NetworkConnection) {}
+   */
+  bool UpdateV1(
+    wt474_messages::v1::NetworkConnection &network_connection,
+    wt474_messages::v1::NetworkConnection &reply,
+    wt474_upsf_service::v1::UpdateReq::UpdateOptions& options)
+  {
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::UpdateReq req;
+    wt474_messages::v1::Item item;
+    *req.mutable_item()->mutable_network_connection() = network_connection;
+    *req.mutable_update_options() = options;
+    bool success = UpdateV1(req, item);
+    if (!success) {
+      return false;
+    }
+    reply = item.network_connection();
+    return success;
+  };
+
+  /**
+   * rpc UpdateV1 (wt474_upsf_messages/v1/ServiceGatewayUserPlane) returns (wt474_upsf_messages/v1/ServiceGatewayUserPlane) {}
+   */
+  bool UpdateV1(
+    wt474_messages::v1::ServiceGatewayUserPlane &service_gateway_user_plane,
+    wt474_messages::v1::ServiceGatewayUserPlane &reply,
+    wt474_upsf_service::v1::UpdateReq::UpdateOptions& options)
+  {
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::UpdateReq req;
+    wt474_messages::v1::Item item;
+    *req.mutable_item()->mutable_service_gateway_user_plane() = service_gateway_user_plane;
+    *req.mutable_update_options() = options;
+    bool success = UpdateV1(req, item);
+    if (!success) {
+      return false;
+    }
+    reply = item.service_gateway_user_plane();
+    return success;
+  };
+
+  /**
+   * rpc UpdateV1 (wt474_upsf_messages/v1/ServiceGatewayUserPlane) returns (wt474_upsf_messages/v1/ServiceGatewayUserPlane) {}
+   */
+  bool UpdateV1(
+    wt474_messages::v1::TrafficSteeringFunction &traffic_steering_function,
+    wt474_messages::v1::TrafficSteeringFunction &reply,
+    wt474_upsf_service::v1::UpdateReq::UpdateOptions& options)
+  {
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::UpdateReq req;
+    wt474_messages::v1::Item item;
+    *req.mutable_item()->mutable_traffic_steering_function() = traffic_steering_function;
+    *req.mutable_update_options() = options;
+    bool success = UpdateV1(req, item);
+    if (!success) {
+      return false;
+    }
+    reply = item.traffic_steering_function();
+    return success;
+  };
+
+  /**
+   * rpc UpdateV1 (wt474_upsf_messages/v1/ServiceGateway) returns (wt474_upsf_messages/v1/ServiceGateway) {}
+   */
+  bool UpdateV1(
+    wt474_messages::v1::ServiceGateway &service_gateway,
+    wt474_messages::v1::ServiceGateway &reply,
+    wt474_upsf_service::v1::UpdateReq::UpdateOptions& options)
+  {
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::UpdateReq req;
+    wt474_messages::v1::Item item;
+    *req.mutable_item()->mutable_service_gateway() = service_gateway;
+    *req.mutable_update_options() = options;
+    bool success = UpdateV1(req, item);
+    if (!success) {
+      return false;
+    }
+    reply = item.service_gateway();
+    return success;
   };
 
   /****************************************
-   * Subscribe
+   * DeleteV1
    ****************************************/
 
-  bool Subscribe(UpsfSubscriber &subscriber) {
+  /**
+   * rpc DeleteV1 (wt474_upsf_service/v1/Item) returns (wt474_messages/v1/Item) {}
+   */
+  bool DeleteV1(
+    const google::protobuf::StringValue &req,
+    google::protobuf::StringValue &resp)
+  {
     std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
-    bbf::sss::SubscribeReq req;
-    bbf::sss::Update resp;
     grpc::ClientContext context;
-
-    for (auto it : subscriber.subscriptions) {
-      req.add_subscription(it);
+    grpc::Status status = stub_->DeleteV1(&context, req, &resp);
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
     }
+    return true;
+  };
 
-    std::unique_ptr<grpc::ClientReader<bbf::sss::Update> > reader(stub_->Subscribe(&context, req));
-    while (reader->Read(&resp)) {
+  /**
+   * rpc DeleteV1 (wt474_upsf_service/v1/Item) returns (wt474_messages/v1/Item) {}
+   */
+  bool DeleteV1(
+    const std::string& request,
+    std::string& reply)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    grpc::ClientContext context;
+    google::protobuf::StringValue str_q;
+    google::protobuf::StringValue str_p;
+    str_q.set_value(request);
+    grpc::Status status = stub_->DeleteV1(&context, str_q, &str_p);
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+    reply.assign(str_p.value());
+    return true;
+  };
 
-        bool cont = true;
+  /****************************************
+   * LookupV1
+   ****************************************/
 
-        // shard
-        if (resp.has_shard()) {
-            cont = subscriber.update(resp.shard());
-        }
+  /**
+   * rpc LookupV1 (wt474_messages/v1/SessionContext_Spec) returns (wt474_messages/v1/SessionContext) {}
+   */
+  bool LookupV1(
+    wt474_messages::v1::SessionContext::Spec& session_context_spec,
+    wt474_messages::v1::SessionContext& resp)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    grpc::ClientContext context;
+    grpc::Status status = stub_->LookupV1(&context, session_context_spec, &resp);
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+    return true;
+  };
 
-        // session_context
-        if (resp.has_session_context()) {
-            cont = subscriber.update(resp.session_context());
-        }
+  /****************************************
+   * ReadV1
+   ****************************************/
 
-        // network_connection
-        if (resp.has_network_connection()) {
-            cont = subscriber.update(resp.network_connection());
-        }
+  bool ReadV1(
+    const std::string& name,
+    wt474_messages::v1::ServiceGateway& service_gateway)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
 
-        // service_gateway_user_plane
-        if (resp.has_service_gateway_user_plane()) {
-            cont = subscriber.update(resp.service_gateway_user_plane());
-        }
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::service_gateway);
 
-        // traffic_steering_function
-        if (resp.has_traffic_steering_function()) {
-            cont = subscriber.update(resp.traffic_steering_function());
-        }
+    /* set parent name */
+    //req.add_parent()->set_value(name);
+    req.add_name()->set_value(name);
 
-        // service_gateway
-        if (resp.has_service_gateway()) {
-            cont = subscriber.update(resp.service_gateway());
-        }
+    /* set watch */
+    req.set_watch(false);
 
-        // break from loop?
-        if (!cont) {
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (item.has_service_gateway()) {
+            service_gateway = item.service_gateway();
             break;
         }
     }
@@ -815,14 +530,447 @@ public:
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
       return false;
     }
+
     return true;
   };
+
+  bool ReadV1(
+    const std::string& name,
+    wt474_messages::v1::ServiceGatewayUserPlane& service_gateway_user_plane)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::service_gateway_user_plane);
+
+    /* set parent name */
+    //req.add_parent()->set_value(name);
+    req.add_name()->set_value(name);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (item.has_service_gateway_user_plane()) {
+            service_gateway_user_plane = item.service_gateway_user_plane();
+            break;
+        }
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    const std::string& name,
+    wt474_messages::v1::TrafficSteeringFunction& traffic_steering_function)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::traffic_steering_function);
+
+    /* set parent name */
+    //req.add_parent()->set_value(name);
+    req.add_name()->set_value(name);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (item.has_traffic_steering_function()) {
+            traffic_steering_function = item.traffic_steering_function();
+            break;
+        }
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    const std::string& name,
+    wt474_messages::v1::NetworkConnection& network_connection)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::network_connection);
+
+    /* set parent name */
+    //req.add_parent()->set_value(name);
+    req.add_name()->set_value(name);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (item.has_network_connection()) {
+            network_connection = item.network_connection();
+            break;
+        }
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    const std::string& name,
+    wt474_messages::v1::Shard& shard)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::shard);
+
+    /* set parent name */
+    //req.add_parent()->set_value(name);
+    req.add_name()->set_value(name);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (item.has_shard()) {
+            shard = item.shard();
+            break;
+        }
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    const std::string& name,
+    wt474_messages::v1::SessionContext& session_context)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::session_context);
+
+    /* set parent name */
+    //req.add_parent()->set_value(name);
+    req.add_name()->set_value(name);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (item.has_session_context()) {
+            session_context = item.session_context();
+            break;
+        }
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    std::vector<wt474_messages::v1::ServiceGateway>& service_gateways)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::service_gateway);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (not item.has_service_gateway())
+            continue;
+        service_gateways.push_back(item.service_gateway());
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    std::vector<wt474_messages::v1::ServiceGatewayUserPlane>& service_gateway_user_planes)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::service_gateway_user_plane);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (not item.has_service_gateway_user_plane())
+            continue;
+        service_gateway_user_planes.push_back(item.service_gateway_user_plane());
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    std::vector<wt474_messages::v1::TrafficSteeringFunction>& traffic_steering_functions)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::traffic_steering_function);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (not item.has_traffic_steering_function())
+            continue;
+        traffic_steering_functions.push_back(item.traffic_steering_function());
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    std::vector<wt474_messages::v1::NetworkConnection>& network_connections)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::network_connection);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (not item.has_network_connection())
+            continue;
+        network_connections.push_back(item.network_connection());
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    std::vector<wt474_messages::v1::Shard>& shards)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::shard);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (not item.has_shard())
+            continue;
+        shards.push_back(item.shard());
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    std::vector<wt474_messages::v1::SessionContext>& session_contexts)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item type */
+    req.add_itemtype(wt474_upsf_service::v1::ItemType::session_context);
+
+    /* set watch */
+    req.set_watch(false);
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    while (reader->Read(&item)) {
+        if (not item.has_session_context())
+            continue;
+        session_contexts.push_back(item.session_context());
+    }
+    grpc::Status status = reader->Finish();
+    if (!status.ok()) {
+      LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+
+    return true;
+  };
+
+  bool ReadV1(
+    UpsfSubscriber& subscriber)
+  {
+    std::unique_lock lock(mutex_);
+    VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
+    wt474_upsf_service::v1::ReadReq req;
+
+    /* set item_types */
+    for (auto it : subscriber.itemtypes) {
+      req.add_itemtype(it);
+    }
+    /* set item_states */
+    for (auto it : subscriber.derivedstates) {
+      req.add_itemstate(it);
+    }
+    /* set item parents */
+    int index = 0;
+    for (auto it : subscriber.parents) {
+      req.mutable_parent(index++)->set_value(it);
+    }
+    /* set item names */
+    int jndex = 0;
+    for (auto it : subscriber.names) {
+      req.mutable_name(jndex++)->set_value(it);
+    }
+    /* set watch */
+    req.set_watch(subscriber.get_watch());
+
+    grpc::ClientContext context;
+    wt474_messages::v1::Item item;
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    do {
+        while (reader->Read(&item)) {
+    
+            // shard
+            if (item.has_shard()) {
+                subscriber.notify(item.shard());
+            }
+            // session_context
+            else if (item.has_session_context()) {
+                subscriber.notify(item.session_context());
+            }
+            // network_connection
+            else if (item.has_network_connection()) {
+                subscriber.notify(item.network_connection());
+            }
+            // service_gateway_user_plane
+            else if (item.has_service_gateway_user_plane()) {
+                subscriber.notify(item.service_gateway_user_plane());
+            }
+            // traffic_steering_function
+            else if (item.has_traffic_steering_function()) {
+                subscriber.notify(item.traffic_steering_function());
+            }
+            // service_gateway
+            else if (item.has_service_gateway()) {
+                subscriber.notify(item.service_gateway());
+            }
+        }
+        grpc::Status status = reader->Finish();
+        if (!status.ok()) {
+          LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+          return false;
+        }
+
+    } while (subscriber.get_watch()); // continue if watch == true
+
+    return true;
+  };
+
 
 private:
   mutable std::shared_mutex mutex_;
   std::shared_ptr<grpc::Channel> channel;
-  std::unique_ptr<bbf::sss::sssUpsf::Stub> stub_;
+  std::unique_ptr<wt474_upsf_service::v1::upsf::Stub> stub_;
 };
+
 } // namespace upsf
 
 #endif
