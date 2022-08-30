@@ -375,6 +375,11 @@ upsf_service_gateway_t* upsf_get_service_gateway(upsf_handle_t upsf_handle, upsf
     return nullptr;
   }
 
+  /* empty name: not found */
+  if (reply.name().empty()) {
+    return nullptr;
+  }
+
   /* map cpp-object to c-struct */
   upsf::UpsfMapping::map(reply, *upsf_service_gateway);
 #ifndef NDEBUG
@@ -601,6 +606,11 @@ upsf_service_gateway_user_plane_t* upsf_get_service_gateway_user_plane(upsf_hand
 
   /* call upsf client instance */
   if (!slot->client->ReadV1(std::string(upsf_service_gateway_user_plane->name.str), reply)) {
+    return nullptr;
+  }
+
+  /* empty name: not found */
+  if (reply.name().empty()) {
     return nullptr;
   }
 
@@ -833,6 +843,11 @@ upsf_traffic_steering_function_t* upsf_get_traffic_steering_function(upsf_handle
     return nullptr;
   }
 
+  /* empty name: not found */
+  if (reply.name().empty()) {
+    return nullptr;
+  }
+
   /* map cpp-object to c-struct */
   upsf::UpsfMapping::map(reply, *upsf_traffic_steering_function);
 #ifndef NDEBUG
@@ -1059,6 +1074,11 @@ upsf_network_connection_t* upsf_get_network_connection(upsf_handle_t upsf_handle
 
   /* call upsf client instance */
   if (!slot->client->ReadV1(std::string(upsf_network_connection->name.str), reply)) {
+    return nullptr;
+  }
+
+  /* empty name: not found */
+  if (reply.name().empty()) {
     return nullptr;
   }
 
@@ -1291,6 +1311,11 @@ upsf_shard_t* upsf_get_shard(upsf_handle_t upsf_handle, upsf_shard_t *upsf_shard
     return nullptr;
   }
 
+  /* empty name: not found */
+  if (reply.name().empty()) {
+    return nullptr;
+  }
+
   /* map cpp-object to c-struct */
   upsf::UpsfMapping::map(reply, *upsf_shard);
 #ifndef NDEBUG
@@ -1517,6 +1542,11 @@ upsf_session_context_t* upsf_get_session_context(upsf_handle_t upsf_handle, upsf
 
   /* call upsf client instance */
   if (!slot->client->ReadV1(std::string(upsf_session_context->name.str), reply)) {
+    return nullptr;
+  }
+
+  /* empty name: not found */
+  if (reply.name().empty()) {
     return nullptr;
   }
 
