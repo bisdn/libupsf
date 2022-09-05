@@ -76,6 +76,8 @@ import "google/protobuf/timestamp.proto";
    inactive = 1; //Item exists but cannot currently be used.
    active   = 2; //Item is active and is correctly deployed in the network.
    updating = 3; //Item exists, but requires action to be correctly deployed.
+   deleting = 4; //Item under deletion, added by bisdn, 20220905
+   deleted  = 5; //Item delete, added by bisdn, 20220905
 }
 
 /* MetaData is a general message that can optionally be added to proved data about an item
