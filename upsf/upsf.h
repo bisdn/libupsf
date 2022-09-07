@@ -24,6 +24,8 @@ enum upsf_derived_state_t {
     UPSF_DERIVED_STATE_INACTIVE = 1,
     UPSF_DERIVED_STATE_ACTIVE = 2,
     UPSF_DERIVED_STATE_UPDATING = 3,
+    UPSF_DERIVED_STATE_DELETING = 4,
+    UPSF_DERIVED_STATE_DELETED = 5,
     UPSF_DERIVED_STATE_MAX,
 };
 
@@ -71,9 +73,10 @@ enum upsf_nc_spec_type_t {
 
 /* endpoint types */
 enum upsf_ep_type_t {
-    UPSF_EP_TYPE_VTEP = 0,
-    UPSF_EP_TYPE_L2VPN = 1,
-    UPSF_EP_TYPE_PORT_VLAN = 2,
+    UPSF_EP_TYPE_UNSPECIFIED = 0,
+    UPSF_EP_TYPE_VTEP = 1,
+    UPSF_EP_TYPE_L2VPN = 2,
+    UPSF_EP_TYPE_PORT_VLAN = 3,
     UPSF_EP_TYPE_MAX,
 };
 
@@ -495,12 +498,7 @@ char* upsf_dump_session_context(
 /* lookup */
 upsf_session_context_t* upsf_lookup(
     upsf_handle_t upsf_handle,
-    upsf_session_context_t* session_context,
-    const char* mac_address,
-    const uint16_t s_tag,
-    const uint16_t c_tag,
-    const char* circuit_id,
-    const char* remote_id);
+    upsf_session_context_t* session_context);
 
 /* subscribe */
 int upsf_subscribe(
