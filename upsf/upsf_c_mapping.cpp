@@ -154,26 +154,8 @@ UpsfMapping::map(
         to.supported_service_group[i].len = strlen(to.supported_service_group[i].str);
     }
 
-    /* service_gateway_user_plane: spec: default_endpoint: endpoint_name */
-    strncpy(
-        to.default_endpoint.endpoint_name.str,
-        from.default_endpoint().endpoint_name().c_str(),
-        sizeof(to.default_endpoint.endpoint_name.str) - 1);
-    to.default_endpoint.endpoint_name.len = strlen(to.default_endpoint.endpoint_name.str);
-
-    /* service_gateway_user_plane: spec: default_endpoint: ep_spec: vtep: udp_port */
-    /* TODO: add all endpoint types*/
-    to.default_endpoint.ep_spec.vtep.udp_port = from.default_endpoint().vtep().udp_port();
-
-    /* service_gateway_user_plane: spec: default_endpoint: ep_spec: vtep: vni: */
-    to.default_endpoint.ep_spec.vtep.vni = from.default_endpoint().vtep().vni();
-
-    /* service_gateway_user_plane: spec: default_endpoint: ep_spec: vtep: ip_address: */
-    strncpy(
-        to.default_endpoint.ep_spec.vtep.ip_address.str,
-        from.default_endpoint().vtep().ip_address().c_str(),
-        sizeof(to.default_endpoint.ep_spec.vtep.ip_address.str) -1);
-    to.default_endpoint.ep_spec.vtep.ip_address.len = strlen(to.default_endpoint.ep_spec.vtep.ip_address.str);
+    /* service_gateway_user_plane: spec: default_endpoint */
+    UpsfMapping::map(from.default_endpoint(), to.default_endpoint);
 
     return true;
 }
@@ -196,22 +178,8 @@ UpsfMapping::map(
                 from.supported_service_group[i].str));
     }
 
-    /* service_gateway_user_plane: spec: default_endpoint: endpoint_name */
-    to.mutable_default_endpoint()->set_endpoint_name(
-        from.default_endpoint.endpoint_name.str);
-
-    /* service_gateway_user_plane: spec: default_endpoint: ep_spec: vtep: ip_address: */
-    /* TODO: add all endpoint types*/
-    to.mutable_default_endpoint()->mutable_vtep()->set_ip_address(
-        from.default_endpoint.ep_spec.vtep.ip_address.str);
-
-    /* service_gateway_user_plane: spec: default_endpoint: ep_spec: vtep: udp_port */
-    to.mutable_default_endpoint()->mutable_vtep()->set_udp_port(
-        from.default_endpoint.ep_spec.vtep.udp_port);
-
-    /* service_gateway_user_plane: spec: default_endpoint: ep_spec: vtep: vni: */
-    to.mutable_default_endpoint()->mutable_vtep()->set_vni(
-      from.default_endpoint.ep_spec.vtep.vni);
+    /* service_gateway_user_plane: spec: default_endpoint */
+    UpsfMapping::map(from.default_endpoint, *to.mutable_default_endpoint());
 
     return true;
 }
@@ -312,26 +280,8 @@ UpsfMapping::map(
     /* traffic_steering_function: spec: init */
     memset(&to, 0, sizeof(to));
 
-    /* traffic_steering_function: spec: default_endpoint: endpoint_name */
-    strncpy(
-        to.default_endpoint.endpoint_name.str,
-        from.default_endpoint().endpoint_name().c_str(),
-        sizeof(to.default_endpoint.endpoint_name.str) - 1);
-    to.default_endpoint.endpoint_name.len = strlen(to.default_endpoint.endpoint_name.str);
-
-    /* traffic_steering_function: spec: default_endpoint: ep_spec: vtep: udp_port */
-    /* TODO: add all endpoint types*/
-    to.default_endpoint.ep_spec.vtep.udp_port = from.default_endpoint().vtep().udp_port();
-
-    /* traffic_steering_function: spec: default_endpoint: ep_spec: vtep: vni: */
-    to.default_endpoint.ep_spec.vtep.vni = from.default_endpoint().vtep().vni();
-
-    /* traffic_steering_function: spec: default_endpoint: ep_spec: vtep: ip_address: */
-    strncpy(
-        to.default_endpoint.ep_spec.vtep.ip_address.str,
-        from.default_endpoint().vtep().ip_address().c_str(),
-        sizeof(to.default_endpoint.ep_spec.vtep.ip_address.str) -1);
-    to.default_endpoint.ep_spec.vtep.ip_address.len = strlen(to.default_endpoint.ep_spec.vtep.ip_address.str);
+    /* service_gateway_user_plane: spec: default_endpoint */
+    UpsfMapping::map(from.default_endpoint(), to.default_endpoint);
 
     return true;
 }
@@ -341,22 +291,8 @@ UpsfMapping::map(
     const upsf_traffic_steering_function_spec_t& from,
     wt474_messages::v1::TrafficSteeringFunction::Spec& to)
 {
-    /* traffic_steering_function: spec: default_endpoint: endpoint_name */
-    to.mutable_default_endpoint()->set_endpoint_name(
-        from.default_endpoint.endpoint_name.str);
-
-    /* traffic_steering_function: spec: default_endpoint: ep_spec: vtep: ip_address: */
-    /* TODO: add all endpoint types*/
-    to.mutable_default_endpoint()->mutable_vtep()->set_ip_address(
-        from.default_endpoint.ep_spec.vtep.ip_address.str);
-
-    /* traffic_steering_function: spec: default_endpoint: ep_spec: vtep: udp_port */
-    to.mutable_default_endpoint()->mutable_vtep()->set_udp_port(
-        from.default_endpoint.ep_spec.vtep.udp_port);
-
-    /* traffic_steering_function: spec: default_endpoint: ep_spec: vtep: vni: */
-    to.mutable_default_endpoint()->mutable_vtep()->set_vni(
-      from.default_endpoint.ep_spec.vtep.vni);
+    /* service_gateway_user_plane: spec: default_endpoint */
+    UpsfMapping::map(from.default_endpoint, *to.mutable_default_endpoint());
 
     return true;
 }
@@ -744,6 +680,7 @@ UpsfMapping::map(
     UpsfMapping::map(from.desired_state(), to.desired_state);
 
     /* shard: spec: prefix */
+    to.prefix_size = from.prefix_size();
     for (int i = 0; i < from.prefix_size(); i++) {
         strncpy(
             to.prefix[i].str,
@@ -798,6 +735,7 @@ UpsfMapping::map(
     to.service_gateway_user_plane.len = strlen(to.service_gateway_user_plane.str);
 
     /* shard: spec: desired_state: network_connection */
+    to.network_connection_size = from.network_connection_size();
     for (int i = 0; i < from.network_connection_size(); i++) {
         strncpy(
             to.network_connection[i].str,
