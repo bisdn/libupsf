@@ -781,6 +781,16 @@ UpsfMapping::map(
     /* shard: status: maximum_allocated_quality */
     to.maximum_allocated_quality = from.maximum_allocated_quality();
 
+    /* shard: status: service_groups_supported */
+    to.service_groups_supported_size = from.service_groups_supported_size();
+    for (int i = 0; i < from.service_groups_supported_size(); i++) {
+        strncpy(
+            to.service_groups_supported[i].str,
+            from.service_groups_supported(i).c_str(),
+            sizeof(to.service_groups_supported[i].str) - 1);
+        to.service_groups_supported[i].len = strlen(to.service_groups_supported[i].str);
+    }
+
     /* shard: status: current_state */
     UpsfMapping::map(from.current_state(), to.current_state);
 
@@ -799,6 +809,13 @@ UpsfMapping::map(
     /* shard: status: maximum_allocated_quality */
     to.set_maximum_allocated_quality(
         from.maximum_allocated_quality);
+
+    /* shard: status: service_groups_supported */
+    for (int i = 0; i < from.service_groups_supported_size; i++) {
+        to.add_service_groups_supported(
+            std::string(
+                from.service_groups_supported[i].str));
+    }
 
     /* shard: status: current_state */
     UpsfMapping::map(from.current_state, *to.mutable_current_state());
@@ -1178,6 +1195,13 @@ UpsfMapping::map(
     /* session_context: spec: desired_state */
     UpsfMapping::map(from.desired_state(), to.desired_state); 
 
+    /* session_context: spec: network_connection */
+    strncpy(
+        to.network_connection.str,
+        from.network_connection().c_str(),
+        sizeof(to.network_connection.str) - 1);
+    to.network_connection.len = strlen(to.network_connection.str);
+
     return true;
 }
 
@@ -1209,6 +1233,9 @@ UpsfMapping::map(
 
     /* session_context: spec: desired_state */
     UpsfMapping::map(from.desired_state, *to.mutable_desired_state()); 
+
+    /* session_context: spec: network_connection */
+    to.set_network_connection(std::string(from.network_connection.str));
 
     return true;
 }

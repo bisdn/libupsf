@@ -260,6 +260,8 @@ typedef struct {
 typedef struct {
     int allocated_session_count;
     int maximum_allocated_quality;
+    upsf_string_t service_groups_supported[UPSF_MAX_NUM_SUPPORTED_SERVICE_GROUPS];
+    size_t service_groups_supported_size;
     upsf_shard_status_current_state_t current_state;
 } upsf_shard_status_t;
 
@@ -299,6 +301,7 @@ typedef struct {
     upsf_string_t remote_id;
     upsf_session_filter_t session_filter;
     upsf_session_context_spec_desired_state_t desired_state;
+    upsf_string_t network_connection;
 } upsf_session_context_spec_t;
 
 /* message: session_context_status_current_state */

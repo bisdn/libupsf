@@ -90,11 +90,11 @@ import "google/protobuf/timestamp.proto";
     DerivedState derived_state = 4;
 }
 
-/* Maintenance holds maintenence information relating to the item
+/* Maintenance holds maintenance information relating to the item
 */
 message Maintenance {
    enum MaintenanceReq {
-      none              = 0; //The item has no maintenence required.
+      none              = 0; //The item has no maintenance required.
       drain             = 1; //All dependant items should be moved away from this item
       drain_and_delete  = 2; //All dependant items should be moved away from this item and it should then be auto-matically deleted
    }
@@ -163,6 +163,7 @@ message Shard{
    message Status{
       int32 allocated_session_count = 1;
       int32 maximum_allocated_quality = 3; //not in 474 contrib
+      repeated string service_groups_supported = 4; //not in 474 contrib
       message CurrentState{
          string service_gateway_user_plane =1;
          map<string, string> tsf_network_connection = 2;
@@ -260,6 +261,7 @@ message SessionContext{
          string shard = 1;
       }
       DesiredState desired_state = 7;
+      string network_connection = 8; //not in 474 yet
    }
    Spec spec = 3;
 
