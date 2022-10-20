@@ -1,4 +1,5 @@
 #include "upsf_c_mapping.hpp"
+#include "upsf_stream.hpp"
 
 using namespace upsf;
 
@@ -145,13 +146,18 @@ UpsfMapping::map(
     to.max_shards = from.max_shards();
 
     /* service_gateway_user_plane: spec: supported_service_group */
-    to.supported_service_group_size = from.supported_service_group_size();
+    to.supported_service_group_size = (from.supported_service_group_size() < UPSF_MAX_NUM_SUPPORTED_SERVICE_GROUPS) ? from.supported_service_group_size() : UPSF_MAX_NUM_SUPPORTED_SERVICE_GROUPS;
     for (int i = 0; i < to.supported_service_group_size; i++) {
         strncpy(
             to.supported_service_group[i].str,
             from.supported_service_group(i).c_str(),
             sizeof(to.supported_service_group[i].str) - 1);
         to.supported_service_group[i].len = strlen(to.supported_service_group[i].str);
+    }
+
+    /* log warning if incoming message exceeds local array capacity */
+    if (to.supported_service_group_size < from.supported_service_group_size()) {
+        LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for supported service groups, max number supported=" << UPSF_MAX_NUM_SUPPORTED_SERVICE_GROUPS << ", from: " << upsf::ServiceGatewayUserPlaneSpecStream(from) << std::endl;
     }
 
     /* service_gateway_user_plane: spec: default_endpoint */
@@ -466,11 +472,16 @@ UpsfMapping::map(
         to.nc_spec_type = UPSF_NC_SPEC_TYPE_SS_PTP;
 
         /* network_connection: spec: ss_ptp: sgup_endpoint */
-        to.nc_spec.ss_ptp.sgup_endpoint_size = from.ss_ptp().sgup_endpoint_size();
+        to.nc_spec.ss_ptp.sgup_endpoint_size = (from.ss_ptp().sgup_endpoint_size() < UPSF_MAX_NUM_ENDPOINTS) ? from.ss_ptp().sgup_endpoint_size() : UPSF_MAX_NUM_ENDPOINTS;
         for (int i = 0; i < to.nc_spec.ss_ptp.sgup_endpoint_size; i++) {
             UpsfMapping::map(
                 from.ss_ptp().sgup_endpoint(i),
                 to.nc_spec.ss_ptp.sgup_endpoint[i]);
+        }
+
+        /* log warning if incoming message exceeds local array capacity */
+        if (to.nc_spec.ss_ptp.sgup_endpoint_size < from.ss_ptp().sgup_endpoint_size()) {
+            LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for sgup endpoints of type ss-ptp, max number supported=" << UPSF_MAX_NUM_ENDPOINTS << ", from: " << upsf::NetworkConnectionSpecStream(from) << std::endl;
         }
 
         /* network_connection: spec: ss_ptp: tsf_endpoint */
@@ -484,19 +495,29 @@ UpsfMapping::map(
         to.nc_spec_type = UPSF_NC_SPEC_TYPE_SS_MPTP;
 
         /* network_connection: spec: ss_mptp: sgup_endpoint */
-        to.nc_spec.ss_mptp.sgup_endpoint_size = from.ss_mptpc().sgup_endpoint_size();
+        to.nc_spec.ss_mptp.sgup_endpoint_size = (from.ss_mptpc().sgup_endpoint_size() < UPSF_MAX_NUM_ENDPOINTS) ? from.ss_mptpc().sgup_endpoint_size() : UPSF_MAX_NUM_ENDPOINTS;
         for (int i = 0; i < to.nc_spec.ss_mptp.sgup_endpoint_size; i++) {
             UpsfMapping::map(
                 from.ss_mptpc().sgup_endpoint(i),
                 to.nc_spec.ss_mptp.sgup_endpoint[i]);
         }
 
+        /* log warning if incoming message exceeds local array capacity */
+        if (to.nc_spec.ss_mptp.sgup_endpoint_size < from.ss_mptpc().sgup_endpoint_size()) {
+            LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for sgup endpoints of type ss-mptp, max number supported=" << UPSF_MAX_NUM_ENDPOINTS << ", from: " << upsf::NetworkConnectionSpecStream(from) << std::endl;
+        }
+
         /* network_connection: spec: ss_mptp: tsf_endpoint */
-        to.nc_spec.ss_mptp.tsf_endpoint_size = from.ss_mptpc().tsf_endpoint_size();
+        to.nc_spec.ss_mptp.tsf_endpoint_size = (from.ss_mptpc().tsf_endpoint_size() < UPSF_MAX_NUM_ENDPOINTS) ? from.ss_mptpc().tsf_endpoint_size() : UPSF_MAX_NUM_ENDPOINTS;
         for (int i = 0; i < to.nc_spec.ss_mptp.tsf_endpoint_size; i++) {
             UpsfMapping::map(
                 from.ss_mptpc().tsf_endpoint(i),
                 to.nc_spec.ss_mptp.tsf_endpoint[i]);
+        }
+
+        /* log warning if incoming message exceeds local array capacity */
+        if (to.nc_spec.ss_mptp.tsf_endpoint_size < from.ss_mptpc().tsf_endpoint_size()) {
+            LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for tsf endpoints of type ss-mptp, max number supported=" << UPSF_MAX_NUM_ENDPOINTS << ", from: " << upsf::NetworkConnectionSpecStream(from) << std::endl;
         }
 
     /* network_connection: spec: ms_ptp */
@@ -525,11 +546,16 @@ UpsfMapping::map(
             to.nc_spec.ms_mptp.sgup_endpoint);
 
         /* network_connection: spec: ms_mptp: tsf_endpoint */
-        to.nc_spec.ms_mptp.tsf_endpoint_size = from.ms_mptp().tsf_endpoint_size();
+        to.nc_spec.ms_mptp.tsf_endpoint_size = (from.ms_mptp().tsf_endpoint_size() < UPSF_MAX_NUM_ENDPOINTS) ? from.ms_mptp().tsf_endpoint_size() : UPSF_MAX_NUM_ENDPOINTS;
         for (int i = 0; i < to.nc_spec.ms_mptp.tsf_endpoint_size; i++) {
             UpsfMapping::map(
                 from.ms_mptp().tsf_endpoint(i),
                 to.nc_spec.ms_mptp.tsf_endpoint[i]);
+        }
+
+        /* log warning if incoming message exceeds local array capacity */
+        if (to.nc_spec.ms_mptp.tsf_endpoint_size < from.ms_mptp().tsf_endpoint_size()) {
+            LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for tsf endpoints of type ms-mptp, max number supported=" << UPSF_MAX_NUM_ENDPOINTS << ", from: " << upsf::NetworkConnectionSpecStream(from) << std::endl;
         }
     }
 
@@ -545,7 +571,6 @@ UpsfMapping::map(
     memset(&to, 0, sizeof(to));
 
     /* network_connection: status: nc_active */
-    to.nc_active_size = from.nc_active_size();
     int i = 0;
     for (auto it : from.nc_active()) {
         /* network_connection: status: nc_active[i] */
@@ -569,7 +594,14 @@ UpsfMapping::map(
         }
         to.nc_active[i].value.len = strlen(to.nc_active[i].value.str);
 
-        i++;
+        if (++i == UPSF_MAX_NUM_ENDPOINTS)
+            break;
+    }
+    to.nc_active_size = i;
+
+    /* log warning if incoming message exceeds local array capacity */
+    if (to.nc_active_size < from.nc_active_size()) {
+        LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for nc-active status entries, max number supported=" << UPSF_MAX_NUM_ENDPOINTS << ", from: " << upsf::NetworkConnectionStatusStream(from) << std::endl;
     }
 
     return true;
@@ -680,13 +712,18 @@ UpsfMapping::map(
     UpsfMapping::map(from.desired_state(), to.desired_state);
 
     /* shard: spec: prefix */
-    to.prefix_size = from.prefix_size();
-    for (int i = 0; i < from.prefix_size(); i++) {
+    to.prefix_size = (from.prefix_size() < UPSF_MAX_NUM_IP_PREFIXES) ? from.prefix_size() : UPSF_MAX_NUM_IP_PREFIXES;
+    for (int i = 0; i < to.prefix_size; i++) {
         strncpy(
             to.prefix[i].str,
             from.prefix(i).c_str(),
             sizeof(to.prefix[i].str) - 1);
         to.prefix[i].len = strlen(to.prefix[i].str);
+    }
+
+    /* log warning if incoming message exceeds local array capacity */
+    if (to.prefix_size < from.prefix_size()) {
+        LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for IP prefix entries, max number supported=" << UPSF_MAX_NUM_IP_PREFIXES << ", from: " << upsf::ShardSpecStream(from) << std::endl;
     }
 
     return true;
@@ -735,13 +772,18 @@ UpsfMapping::map(
     to.service_gateway_user_plane.len = strlen(to.service_gateway_user_plane.str);
 
     /* shard: spec: desired_state: network_connection */
-    to.network_connection_size = from.network_connection_size();
-    for (int i = 0; i < from.network_connection_size(); i++) {
+    to.network_connection_size = (from.network_connection_size() < UPSF_MAX_NUM_NETWORK_CONNECTIONS) ? from.network_connection_size() : UPSF_MAX_NUM_NETWORK_CONNECTIONS;
+    for (int i = 0; i < to.network_connection_size; i++) {
         strncpy(
             to.network_connection[i].str,
             from.network_connection(i).c_str(),
             sizeof(to.network_connection[i].str) - 1);
         to.network_connection[i].len = strlen(to.network_connection[i].str);
+    }
+
+    /* log warning if incoming message exceeds local array capacity */
+    if (to.network_connection_size < from.network_connection_size()) {
+        LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for network connection entries, max number supported=" << UPSF_MAX_NUM_NETWORK_CONNECTIONS << ", from: " << upsf::ShardSpecDesiredStateStream(from) << std::endl;
     }
 
     return true;
@@ -782,13 +824,18 @@ UpsfMapping::map(
     to.maximum_allocated_quality = from.maximum_allocated_quality();
 
     /* shard: status: service_groups_supported */
-    to.service_groups_supported_size = from.service_groups_supported_size();
-    for (int i = 0; i < from.service_groups_supported_size(); i++) {
+    to.service_groups_supported_size = (from.service_groups_supported_size() < UPSF_MAX_NUM_SUPPORTED_SERVICE_GROUPS) ? from.service_groups_supported_size() : UPSF_MAX_NUM_SUPPORTED_SERVICE_GROUPS;
+    for (int i = 0; i < to.service_groups_supported_size; i++) {
         strncpy(
             to.service_groups_supported[i].str,
             from.service_groups_supported(i).c_str(),
             sizeof(to.service_groups_supported[i].str) - 1);
         to.service_groups_supported[i].len = strlen(to.service_groups_supported[i].str);
+    }
+
+    /* log warning if incoming message exceeds local array capacity */
+    if (to.service_groups_supported_size < from.service_groups_supported_size()) {
+        LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for service groups supported entries, max number supported=" << UPSF_MAX_NUM_SUPPORTED_SERVICE_GROUPS << ", from: " << upsf::ShardStatusStream(from) << std::endl;
     }
 
     /* shard: status: current_state */
@@ -839,21 +886,28 @@ UpsfMapping::map(
     to.service_gateway_user_plane.len = strlen(to.service_gateway_user_plane.str);
 
     /* shard: status: current_state: tsf_network_connection */
-    int index = 0;
+    int i = 0;
     for (auto it : from.tsf_network_connection()) {
         strncpy(
-            to.tsf_network_connection[index].key.str,
+            to.tsf_network_connection[i].key.str,
             it.first.c_str(),
-            sizeof(to.tsf_network_connection[index].key.str) - 1);
-        to.tsf_network_connection[index].key.len = strlen(to.tsf_network_connection[index].key.str);
+            sizeof(to.tsf_network_connection[i].key.str) - 1);
+        to.tsf_network_connection[i].key.len = strlen(to.tsf_network_connection[i].key.str);
 
         strncpy(
-            to.tsf_network_connection[index].value.str,
+            to.tsf_network_connection[i].value.str,
             it.second.c_str(),
-            sizeof(to.tsf_network_connection[index].value.str) - 1);
-        to.tsf_network_connection[index].value.len = strlen(to.tsf_network_connection[index].value.str);
+            sizeof(to.tsf_network_connection[i].value.str) - 1);
+        to.tsf_network_connection[i].value.len = strlen(to.tsf_network_connection[i].value.str);
 
-        index++;
+        if (++i == UPSF_MAX_NUM_TSF_NETWORK_CONNECTIONS)
+            break;
+    }
+    to.tsf_network_connection_size = i;
+
+    /* log warning if incoming message exceeds local array capacity */
+    if (to.tsf_network_connection_size < from.tsf_network_connection_size()) {
+        LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for tsf network connection entries, max number supported=" << UPSF_MAX_NUM_TSF_NETWORK_CONNECTIONS << ", from: " << upsf::ShardStatusCurrentStateStream(from) << std::endl;
     }
 
     return true;
@@ -1169,7 +1223,15 @@ UpsfMapping::map(
             it.c_str(),
             sizeof(to.required_service_group[i].str) - 1);
         to.required_service_group[i].len = strlen(to.required_service_group[i].str);
-        i++;
+
+        if (++i == UPSF_MAX_NUM_REQUIRED_SERVICE_GROUPS)
+            break;
+    }
+    to.required_service_group_size = i;
+
+    /* log warning if incoming message exceeds local array capacity */
+    if (to.required_service_group_size < from.required_service_group_size()) {
+        LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for required service group entries, max number supported=" << UPSF_MAX_NUM_REQUIRED_SERVICE_GROUPS << ", from: " << upsf::SessionContextSpecStream(from) << std::endl;
     }
 
     /* session_context: spec: required_quality */

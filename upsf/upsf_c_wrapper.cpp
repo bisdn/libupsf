@@ -284,9 +284,7 @@ upsf_service_gateway_t* upsf_create_service_gateway(upsf_handle_t upsf_handle, u
   wt474_messages::v1::ServiceGateway reply;
 
   upsf::UpsfMapping::map(*service_gateway, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_service_gateway: request=" << upsf::ServiceGatewayStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::ServiceGatewayStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->CreateV1(request, reply)) {
@@ -294,9 +292,7 @@ upsf_service_gateway_t* upsf_create_service_gateway(upsf_handle_t upsf_handle, u
   }
 
   upsf::UpsfMapping::map(reply, *service_gateway);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_service_gateway: reply=" << upsf::ServiceGatewayStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::ServiceGatewayStream(reply) << std::endl;
 
   return service_gateway;
 }
@@ -328,9 +324,7 @@ upsf_service_gateway_t* upsf_update_service_gateway(upsf_handle_t upsf_handle, u
   wt474_messages::v1::ServiceGateway reply;
 
   upsf::UpsfMapping::map(*service_gateway, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_service_gateway: request=" << upsf::ServiceGatewayStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::ServiceGatewayStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->UpdateV1(request, reply, update_options)) {
@@ -338,9 +332,7 @@ upsf_service_gateway_t* upsf_update_service_gateway(upsf_handle_t upsf_handle, u
   }
 
   upsf::UpsfMapping::map(reply, *service_gateway);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_service_gateway: reply=" << upsf::ServiceGatewayStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::ServiceGatewayStream(reply) << std::endl;
 
   return service_gateway;
 }
@@ -368,9 +360,7 @@ upsf_service_gateway_t* upsf_get_service_gateway(upsf_handle_t upsf_handle, upsf
   std::unique_lock rwlock(slot->mutex);
 
   wt474_messages::v1::ServiceGateway reply;
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_service_gateway: request=" << upsf_service_gateway->name.str << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_service_gateway->name.str << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->ReadV1(std::string(upsf_service_gateway->name.str), reply)) {
@@ -384,9 +374,7 @@ upsf_service_gateway_t* upsf_get_service_gateway(upsf_handle_t upsf_handle, upsf
 
   /* map cpp-object to c-struct */
   upsf::UpsfMapping::map(reply, *upsf_service_gateway);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_service_gateway: reply=" << upsf::ServiceGatewayStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::ServiceGatewayStream(reply) << std::endl;
 
   return upsf_service_gateway;
 }
@@ -461,9 +449,7 @@ int upsf_list_service_gateways(upsf_handle_t upsf_handle, upsf_service_gateway_t
   for (int i = 0; i < max_elems; i++) {
     /* map cpp-object to c-struct */
     upsf::UpsfMapping::map(service_gateways[i], elems[i]);
-#ifndef NDEBUG
-    std::cerr << "libupsf: upsf_list_service_gateways: reply[" << i << "]=" << upsf::ServiceGatewayStream(service_gateways[i]) << std::endl;
-#endif
+    VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply[" << i << "]=" << upsf::ServiceGatewayStream(service_gateways[i]) << std::endl;
   }
 
   return service_gateways.size();
@@ -518,9 +504,7 @@ upsf_service_gateway_user_plane_t* upsf_create_service_gateway_user_plane(upsf_h
   wt474_messages::v1::ServiceGatewayUserPlane reply;
 
   upsf::UpsfMapping::map(*service_gateway_user_plane, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_service_gateway_user_plane: request=" << upsf::ServiceGatewayUserPlaneStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::ServiceGatewayUserPlaneStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->CreateV1(request, reply)) {
@@ -528,9 +512,7 @@ upsf_service_gateway_user_plane_t* upsf_create_service_gateway_user_plane(upsf_h
   }
 
   upsf::UpsfMapping::map(reply, *service_gateway_user_plane);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_service_gateway_user_plane: reply=" << upsf::ServiceGatewayUserPlaneStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::ServiceGatewayUserPlaneStream(reply) << std::endl;
 
   return service_gateway_user_plane;
 }
@@ -562,9 +544,7 @@ upsf_service_gateway_user_plane_t* upsf_update_service_gateway_user_plane(upsf_h
   wt474_messages::v1::ServiceGatewayUserPlane reply;
 
   upsf::UpsfMapping::map(*service_gateway_user_plane, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_service_gateway_user_plane: request=" << upsf::ServiceGatewayUserPlaneStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::ServiceGatewayUserPlaneStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->UpdateV1(request, reply, update_options)) {
@@ -572,9 +552,7 @@ upsf_service_gateway_user_plane_t* upsf_update_service_gateway_user_plane(upsf_h
   }
 
   upsf::UpsfMapping::map(reply, *service_gateway_user_plane);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_service_gateway_user_plane: reply=" << upsf::ServiceGatewayUserPlaneStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::ServiceGatewayUserPlaneStream(reply) << std::endl;
 
   return service_gateway_user_plane;
 }
@@ -602,9 +580,7 @@ upsf_service_gateway_user_plane_t* upsf_get_service_gateway_user_plane(upsf_hand
   std::unique_lock rwlock(slot->mutex);
 
   wt474_messages::v1::ServiceGatewayUserPlane reply;
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_service_gateway_user_plane: request=" << upsf_service_gateway_user_plane->name.str << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_service_gateway_user_plane->name.str << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->ReadV1(std::string(upsf_service_gateway_user_plane->name.str), reply)) {
@@ -618,9 +594,7 @@ upsf_service_gateway_user_plane_t* upsf_get_service_gateway_user_plane(upsf_hand
 
   /* map cpp-object to c-struct */
   upsf::UpsfMapping::map(reply, *upsf_service_gateway_user_plane);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_service_gateway_user_plane: reply=" << upsf::ServiceGatewayUserPlaneStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::ServiceGatewayUserPlaneStream(reply) << std::endl;
 
   return upsf_service_gateway_user_plane;
 }
@@ -695,9 +669,7 @@ int upsf_list_service_gateway_user_planes(upsf_handle_t upsf_handle, upsf_servic
   for (int i = 0; i < max_elems; i++) {
     /* map cpp-object to c-struct */
     upsf::UpsfMapping::map(service_gateway_user_planes[i], elems[i]);
-#ifndef NDEBUG
-    std::cerr << "libupsf: upsf_list_service_gateway_user_planes: reply[" << i << "]=" << upsf::ServiceGatewayUserPlaneStream(service_gateway_user_planes[i]) << std::endl;
-#endif
+    VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply[" << i << "]=" << upsf::ServiceGatewayUserPlaneStream(service_gateway_user_planes[i]) << std::endl;
   }
 
   return service_gateway_user_planes.size();
@@ -752,9 +724,7 @@ upsf_traffic_steering_function_t* upsf_create_traffic_steering_function(upsf_han
   wt474_messages::v1::TrafficSteeringFunction reply;
 
   upsf::UpsfMapping::map(*traffic_steering_function, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_traffic_steering_function: request=" << upsf::TrafficSteeringFunctionStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::TrafficSteeringFunctionStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->CreateV1(request, reply)) {
@@ -762,9 +732,7 @@ upsf_traffic_steering_function_t* upsf_create_traffic_steering_function(upsf_han
   }
 
   upsf::UpsfMapping::map(reply, *traffic_steering_function);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_traffic_steering_function: reply=" << upsf::TrafficSteeringFunctionStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::TrafficSteeringFunctionStream(reply) << std::endl;
 
   return traffic_steering_function;
 }
@@ -796,9 +764,7 @@ upsf_traffic_steering_function_t* upsf_update_traffic_steering_function(upsf_han
   wt474_messages::v1::TrafficSteeringFunction reply;
 
   upsf::UpsfMapping::map(*traffic_steering_function, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_traffic_steering_function: request=" << upsf::TrafficSteeringFunctionStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::TrafficSteeringFunctionStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->UpdateV1(request, reply, update_options)) {
@@ -806,9 +772,7 @@ upsf_traffic_steering_function_t* upsf_update_traffic_steering_function(upsf_han
   }
 
   upsf::UpsfMapping::map(reply, *traffic_steering_function);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_traffic_steering_function: reply=" << upsf::TrafficSteeringFunctionStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::TrafficSteeringFunctionStream(reply) << std::endl;
 
   return traffic_steering_function;
 }
@@ -836,9 +800,7 @@ upsf_traffic_steering_function_t* upsf_get_traffic_steering_function(upsf_handle
   std::unique_lock rwlock(slot->mutex);
 
   wt474_messages::v1::TrafficSteeringFunction reply;
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_traffic_steering_function: request=" << upsf_traffic_steering_function->name.str << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_traffic_steering_function->name.str << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->ReadV1(std::string(upsf_traffic_steering_function->name.str), reply)) {
@@ -852,9 +814,7 @@ upsf_traffic_steering_function_t* upsf_get_traffic_steering_function(upsf_handle
 
   /* map cpp-object to c-struct */
   upsf::UpsfMapping::map(reply, *upsf_traffic_steering_function);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_traffic_steering_function: reply=" << upsf::TrafficSteeringFunctionStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::TrafficSteeringFunctionStream(reply) << std::endl;
 
   return upsf_traffic_steering_function;
 }
@@ -929,9 +889,7 @@ int upsf_list_traffic_steering_functions(upsf_handle_t upsf_handle, upsf_traffic
   for (int i = 0; i < max_elems; i++) {
     /* map cpp-object to c-struct */
     upsf::UpsfMapping::map(traffic_steering_functions[i], elems[i]);
-#ifndef NDEBUG
-    std::cerr << "libupsf: upsf_list_traffic_steering_functions: reply[" << i << "]=" << upsf::TrafficSteeringFunctionStream(traffic_steering_functions[i]) << std::endl;
-#endif
+    VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply[" << i << "]=" << upsf::TrafficSteeringFunctionStream(traffic_steering_functions[i]) << std::endl;
   }
 
   return traffic_steering_functions.size();
@@ -986,9 +944,7 @@ upsf_network_connection_t* upsf_create_network_connection(upsf_handle_t upsf_han
   wt474_messages::v1::NetworkConnection reply;
 
   upsf::UpsfMapping::map(*network_connection, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_network_connection: request=" << upsf::NetworkConnectionStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::NetworkConnectionStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->CreateV1(request, reply)) {
@@ -996,9 +952,7 @@ upsf_network_connection_t* upsf_create_network_connection(upsf_handle_t upsf_han
   }
 
   upsf::UpsfMapping::map(reply, *network_connection);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_network_connection: reply=" << upsf::NetworkConnectionStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::NetworkConnectionStream(reply) << std::endl;
 
   return network_connection;
 }
@@ -1030,9 +984,7 @@ upsf_network_connection_t* upsf_update_network_connection(upsf_handle_t upsf_han
   wt474_messages::v1::NetworkConnection reply;
 
   upsf::UpsfMapping::map(*network_connection, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_network_connection: request=" << upsf::NetworkConnectionStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::NetworkConnectionStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->UpdateV1(request, reply, update_options)) {
@@ -1040,9 +992,7 @@ upsf_network_connection_t* upsf_update_network_connection(upsf_handle_t upsf_han
   }
 
   upsf::UpsfMapping::map(reply, *network_connection);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_network_connection: reply=" << upsf::NetworkConnectionStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::NetworkConnectionStream(reply) << std::endl;
 
   return network_connection;
 }
@@ -1070,9 +1020,7 @@ upsf_network_connection_t* upsf_get_network_connection(upsf_handle_t upsf_handle
   std::unique_lock rwlock(slot->mutex);
 
   wt474_messages::v1::NetworkConnection reply;
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_network_connection: request=" << upsf_network_connection->name.str << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_network_connection->name.str << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->ReadV1(std::string(upsf_network_connection->name.str), reply)) {
@@ -1086,9 +1034,7 @@ upsf_network_connection_t* upsf_get_network_connection(upsf_handle_t upsf_handle
 
   /* map cpp-object to c-struct */
   upsf::UpsfMapping::map(reply, *upsf_network_connection);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_network_connection: reply=" << upsf::NetworkConnectionStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::NetworkConnectionStream(reply) << std::endl;
 
   return upsf_network_connection;
 }
@@ -1163,9 +1109,7 @@ int upsf_list_network_connections(upsf_handle_t upsf_handle, upsf_network_connec
   for (int i = 0; i < max_elems; i++) {
     /* map cpp-object to c-struct */
     upsf::UpsfMapping::map(network_connections[i], elems[i]);
-#ifndef NDEBUG
-    std::cerr << "libupsf: upsf_list_network_connections: reply[" << i << "]=" << upsf::NetworkConnectionStream(network_connections[i]) << std::endl;
-#endif
+    VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply[" << i << "]=" << upsf::NetworkConnectionStream(network_connections[i]) << std::endl;
   }
 
   return network_connections.size();
@@ -1220,9 +1164,7 @@ upsf_shard_t* upsf_create_shard(upsf_handle_t upsf_handle, upsf_shard_t* shard)
   wt474_messages::v1::Shard reply;
 
   upsf::UpsfMapping::map(*shard, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_shard: request=" << upsf::ShardStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::ShardStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->CreateV1(request, reply)) {
@@ -1230,9 +1172,7 @@ upsf_shard_t* upsf_create_shard(upsf_handle_t upsf_handle, upsf_shard_t* shard)
   }
 
   upsf::UpsfMapping::map(reply, *shard);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_shard: reply=" << upsf::ShardStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::ShardStream(reply) << std::endl;
 
   return shard;
 }
@@ -1264,9 +1204,7 @@ upsf_shard_t* upsf_update_shard(upsf_handle_t upsf_handle, upsf_shard_t* shard)
   wt474_messages::v1::Shard reply;
 
   upsf::UpsfMapping::map(*shard, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_shard: request=" << upsf::ShardStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::ShardStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->UpdateV1(request, reply, update_options)) {
@@ -1274,9 +1212,7 @@ upsf_shard_t* upsf_update_shard(upsf_handle_t upsf_handle, upsf_shard_t* shard)
   }
 
   upsf::UpsfMapping::map(reply, *shard);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_shard: reply=" << upsf::ShardStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::ShardStream(reply) << std::endl;
 
   return shard;
 }
@@ -1304,9 +1240,7 @@ upsf_shard_t* upsf_get_shard(upsf_handle_t upsf_handle, upsf_shard_t *upsf_shard
   std::unique_lock rwlock(slot->mutex);
 
   wt474_messages::v1::Shard reply;
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_shard: request=" << upsf_shard->name.str << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_shard->name.str << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->ReadV1(std::string(upsf_shard->name.str), reply)) {
@@ -1320,9 +1254,7 @@ upsf_shard_t* upsf_get_shard(upsf_handle_t upsf_handle, upsf_shard_t *upsf_shard
 
   /* map cpp-object to c-struct */
   upsf::UpsfMapping::map(reply, *upsf_shard);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_shard: reply=" << upsf::ShardStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::ShardStream(reply) << std::endl;
 
   return upsf_shard;
 }
@@ -1397,9 +1329,7 @@ int upsf_list_shards(upsf_handle_t upsf_handle, upsf_shard_t* elems, size_t n_el
   for (int i = 0; i < max_elems; i++) {
     /* map cpp-object to c-struct */
     upsf::UpsfMapping::map(shards[i], elems[i]);
-#ifndef NDEBUG
-    std::cerr << "libupsf: upsf_list_shards: reply[" << i << "]=" << upsf::ShardStream(shards[i]) << std::endl;
-#endif
+    VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply[" << i << "]=" << upsf::ShardStream(shards[i]) << std::endl;
   }
 
   return shards.size();
@@ -1454,9 +1384,7 @@ upsf_session_context_t* upsf_create_session_context(upsf_handle_t upsf_handle, u
   wt474_messages::v1::SessionContext reply;
 
   upsf::UpsfMapping::map(*session_context, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_session_context: request=" << upsf::SessionContextStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::SessionContextStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->CreateV1(request, reply)) {
@@ -1464,9 +1392,7 @@ upsf_session_context_t* upsf_create_session_context(upsf_handle_t upsf_handle, u
   }
 
   upsf::UpsfMapping::map(reply, *session_context);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_create_session_context: reply=" << upsf::SessionContextStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::SessionContextStream(reply) << std::endl;
 
   return session_context;
 }
@@ -1498,9 +1424,7 @@ upsf_session_context_t* upsf_update_session_context(upsf_handle_t upsf_handle, u
   wt474_messages::v1::SessionContext reply;
 
   upsf::UpsfMapping::map(*session_context, request);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_session_context: request=" << upsf::SessionContextStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::SessionContextStream(request) << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->UpdateV1(request, reply, update_options)) {
@@ -1508,9 +1432,7 @@ upsf_session_context_t* upsf_update_session_context(upsf_handle_t upsf_handle, u
   }
 
   upsf::UpsfMapping::map(reply, *session_context);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_update_session_context: reply=" << upsf::SessionContextStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::SessionContextStream(reply) << std::endl;
 
   return session_context;
 }
@@ -1538,9 +1460,7 @@ upsf_session_context_t* upsf_get_session_context(upsf_handle_t upsf_handle, upsf
   std::unique_lock rwlock(slot->mutex);
 
   wt474_messages::v1::SessionContext reply;
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_session_context: request=" << upsf_session_context->name.str << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_session_context->name.str << std::endl;
 
   /* call upsf client instance */
   if (!slot->client->ReadV1(std::string(upsf_session_context->name.str), reply)) {
@@ -1554,9 +1474,7 @@ upsf_session_context_t* upsf_get_session_context(upsf_handle_t upsf_handle, upsf
 
   /* map cpp-object to c-struct */
   upsf::UpsfMapping::map(reply, *upsf_session_context);
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_get_session_context: reply=" << upsf::SessionContextStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::SessionContextStream(reply) << std::endl;
 
   return upsf_session_context;
 }
@@ -1631,9 +1549,7 @@ int upsf_list_session_contexts(upsf_handle_t upsf_handle, upsf_session_context_t
   for (int i = 0; i < max_elems; i++) {
     /* map cpp-object to c-struct */
     upsf::UpsfMapping::map(session_contexts[i], elems[i]);
-#ifndef NDEBUG
-    std::cerr << "libupsf: upsf_list_session_contexts: reply[" << i << "]=" << upsf::SessionContextStream(session_contexts[i]) << std::endl;
-#endif
+    VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply[" << i << "]=" << upsf::SessionContextStream(session_contexts[i]) << std::endl;
   }
 
   return session_contexts.size();
@@ -1689,16 +1605,12 @@ upsf_session_context_t* upsf_lookup(upsf_handle_t upsf_handle, upsf_session_cont
 
   upsf::UpsfMapping::map(upsf_session_context->spec, request);
 
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_lookup: request=" << upsf::SessionContextSpecStream(request) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf::SessionContextSpecStream(request) << std::endl;
   /* call upsf client instance */
   if (!slot->client->LookupV1(request, reply)) {
     return nullptr;
   }
-#ifndef NDEBUG
-  std::cerr << "libupsf: upsf_lookup: reply=" << upsf::SessionContextStream(reply) << std::endl;
-#endif
+  VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " reply=" << upsf::SessionContextStream(reply) << std::endl;
 
   /* empty name: not found */
   if (reply.name().empty()) {
