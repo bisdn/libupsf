@@ -8,7 +8,7 @@ find_library(LIBGLOG glog REQUIRED)
 
 # Proto compiler for cpp
 find_program(PROTOBUF_PROTOC protoc)
-find_program(GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+find_program(GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin HINTS /usr/bin REQUIRED)
 
 # Proto file
 get_filename_component(upsf_messages_proto "../upsf/protos/wt474_upsf_messages/v1/messages_v1.proto" ABSOLUTE)
