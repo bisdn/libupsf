@@ -173,7 +173,6 @@ public:
     const wt474_messages::v1::Item &request,
     wt474_messages::v1::Item &reply)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->CreateV1(&context, request, &reply);
@@ -291,7 +290,6 @@ public:
     const wt474_upsf_service::v1::UpdateReq &req,
     wt474_messages::v1::Item &resp)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->UpdateV1(&context, req, &resp);
@@ -439,7 +437,6 @@ public:
     const google::protobuf::StringValue &req,
     google::protobuf::StringValue &resp)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->DeleteV1(&context, req, &resp);
@@ -457,7 +454,6 @@ public:
     const std::string& request,
     std::string& reply)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     google::protobuf::StringValue str_q;
@@ -483,7 +479,6 @@ public:
     wt474_messages::v1::SessionContext::Spec& session_context_spec,
     wt474_messages::v1::SessionContext& resp)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
     grpc::Status status = stub_->LookupV1(&context, session_context_spec, &resp);
@@ -502,7 +497,6 @@ public:
     const std::string& name,
     wt474_messages::v1::ServiceGateway& service_gateway)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -538,7 +532,6 @@ public:
     const std::string& name,
     wt474_messages::v1::ServiceGatewayUserPlane& service_gateway_user_plane)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -574,7 +567,6 @@ public:
     const std::string& name,
     wt474_messages::v1::TrafficSteeringFunction& traffic_steering_function)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -610,7 +602,6 @@ public:
     const std::string& name,
     wt474_messages::v1::NetworkConnection& network_connection)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -646,7 +637,6 @@ public:
     const std::string& name,
     wt474_messages::v1::Shard& shard)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -682,7 +672,6 @@ public:
     const std::string& name,
     wt474_messages::v1::SessionContext& session_context)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -717,7 +706,6 @@ public:
   bool ReadV1(
     std::vector<wt474_messages::v1::ServiceGateway>& service_gateways)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -747,7 +735,6 @@ public:
   bool ReadV1(
     std::vector<wt474_messages::v1::ServiceGatewayUserPlane>& service_gateway_user_planes)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -777,7 +764,6 @@ public:
   bool ReadV1(
     std::vector<wt474_messages::v1::TrafficSteeringFunction>& traffic_steering_functions)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -807,7 +793,6 @@ public:
   bool ReadV1(
     std::vector<wt474_messages::v1::NetworkConnection>& network_connections)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -837,7 +822,6 @@ public:
   bool ReadV1(
     std::vector<wt474_messages::v1::Shard>& shards)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -867,7 +851,6 @@ public:
   bool ReadV1(
     std::vector<wt474_messages::v1::SessionContext>& session_contexts)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -897,7 +880,6 @@ public:
   bool ReadV1(
     UpsfSubscriber& subscriber)
   {
-    std::unique_lock lock(mutex_);
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     wt474_upsf_service::v1::ReadReq req;
 
@@ -966,7 +948,6 @@ public:
 
 
 private:
-  mutable std::shared_mutex mutex_;
   std::shared_ptr<grpc::Channel> channel;
   std::unique_ptr<wt474_upsf_service::v1::upsf::Stub> stub_;
 };
