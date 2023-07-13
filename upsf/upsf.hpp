@@ -175,6 +175,7 @@ public:
   {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     grpc::Status status = stub_->CreateV1(&context, request, &reply);
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
@@ -292,6 +293,7 @@ public:
   {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     grpc::Status status = stub_->UpdateV1(&context, req, &resp);
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
@@ -439,6 +441,7 @@ public:
   {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     grpc::Status status = stub_->DeleteV1(&context, req, &resp);
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
@@ -459,6 +462,7 @@ public:
     google::protobuf::StringValue str_q;
     google::protobuf::StringValue str_p;
     str_q.set_value(request);
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     grpc::Status status = stub_->DeleteV1(&context, str_q, &str_p);
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
@@ -481,6 +485,7 @@ public:
   {
     VLOG(2) << "func: " << __PRETTY_FUNCTION__ << std::endl;
     grpc::ClientContext context;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     grpc::Status status = stub_->LookupV1(&context, session_context_spec, &resp);
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
@@ -512,6 +517,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (item.has_service_gateway()) {
@@ -522,6 +528,9 @@ public:
     grpc::Status status = reader->Finish();
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+    if (item.service_gateway().name() != name) {
       return false;
     }
 
@@ -547,6 +556,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (item.has_service_gateway_user_plane()) {
@@ -557,6 +567,9 @@ public:
     grpc::Status status = reader->Finish();
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+    if (item.service_gateway_user_plane().name() != name) {
       return false;
     }
 
@@ -582,6 +595,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (item.has_traffic_steering_function()) {
@@ -592,6 +606,9 @@ public:
     grpc::Status status = reader->Finish();
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+    if (item.traffic_steering_function().name() != name) {
       return false;
     }
 
@@ -617,6 +634,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (item.has_network_connection()) {
@@ -627,6 +645,9 @@ public:
     grpc::Status status = reader->Finish();
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+    if (item.network_connection().name() != name) {
       return false;
     }
 
@@ -652,6 +673,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (item.has_shard()) {
@@ -662,6 +684,9 @@ public:
     grpc::Status status = reader->Finish();
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+    if (item.shard().name() != name) {
       return false;
     }
 
@@ -687,6 +712,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (item.has_session_context()) {
@@ -697,6 +723,9 @@ public:
     grpc::Status status = reader->Finish();
     if (!status.ok()) {
       LOG(ERROR) << "failure: " << __FUNCTION__ << " code:" << status.error_code() << " reason:" << status.error_message() << std::endl;
+      return false;
+    }
+    if (item.session_context().name() != name) {
       return false;
     }
 
@@ -717,6 +746,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (not item.has_service_gateway())
@@ -746,6 +776,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (not item.has_service_gateway_user_plane())
@@ -775,6 +806,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (not item.has_traffic_steering_function())
@@ -804,6 +836,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (not item.has_network_connection())
@@ -833,6 +866,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (not item.has_shard())
@@ -862,6 +896,7 @@ public:
 
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
+    const std::lock_guard<std::mutex> lock(stub_mutex);
     std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
     while (reader->Read(&item)) {
         if (not item.has_session_context())
@@ -904,12 +939,14 @@ public:
     /* set watch */
     req.set_watch(subscriber.get_watch());
 
+    std::unique_ptr<wt474_upsf_service::v1::upsf::Stub> subscriber_stub_(wt474_upsf_service::v1::upsf::NewStub(channel));
     grpc::ClientContext context;
     wt474_messages::v1::Item item;
-    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(stub_->ReadV1(&context, req));
+    /* create a unique subscriber grpc stub for this long-lasting operation */
+    std::unique_ptr<grpc::ClientReader<wt474_messages::v1::Item> > reader(subscriber_stub_->ReadV1(&context, req));
     do {
         while (reader->Read(&item)) {
-    
+
             // shard
             if (item.has_shard()) {
                 subscriber.notify(item.shard());
@@ -950,6 +987,7 @@ public:
 private:
   std::shared_ptr<grpc::Channel> channel;
   std::unique_ptr<wt474_upsf_service::v1::upsf::Stub> stub_;
+  std::mutex stub_mutex;
 };
 
 } // namespace upsf
