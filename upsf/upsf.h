@@ -342,6 +342,8 @@ upsf_handle_t upsf_open(
 
 int upsf_close();
 
+int upsf_exists();
+
 const char* upsf_derived_state_to_name(int derived_state);
 const char* upsf_item_type_to_name(int item_type);
 const char* upsf_maintenance_req_to_name(int maintenance_req);

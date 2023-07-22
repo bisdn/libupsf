@@ -265,7 +265,7 @@ int upsf_close() {
  * (0) UpsfSlot for this thread already exists
  * (-1) UpsfSlot does not exist yet
  */
-int upsf_is_open() {
+int upsf_exists() {
 
   std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(pthread_self()) == upsf_slots.end()) {
