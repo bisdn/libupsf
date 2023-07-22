@@ -30,6 +30,7 @@ class UpsfSlot final {
 
     std::string upsf_addr;
     std::unique_ptr<upsf::UpsfClient> client;
+    std::shared_mutex upsf_slot_mutex;
 };
 
 class UpsfSubscriberWrapper : public upsf::UpsfSubscriber {
@@ -266,7 +267,7 @@ int upsf_close() {
  */
 int upsf_is_open() {
 
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(pthread_self()) == upsf_slots.end()) {
     return -1;
   }
@@ -290,11 +291,12 @@ upsf_service_gateway_t* upsf_create_service_gateway(upsf_service_gateway_t* serv
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::ServiceGateway request;
   wt474_messages::v1::ServiceGateway reply;
@@ -325,11 +327,12 @@ upsf_service_gateway_t* upsf_update_service_gateway(upsf_service_gateway_t* serv
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_upsf_service::v1::UpdateReq::UpdateOptions update_options;
   wt474_messages::v1::ServiceGateway request;
@@ -361,11 +364,12 @@ upsf_service_gateway_t* upsf_get_service_gateway(upsf_service_gateway_t *upsf_se
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::ServiceGateway reply;
   VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_service_gateway->name.str << std::endl;
@@ -399,11 +403,12 @@ int upsf_delete_service_gateway(upsf_service_gateway_t *upsf_service_gateway)
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   google::protobuf::StringValue req;
   google::protobuf::StringValue reply;
@@ -429,11 +434,12 @@ int upsf_list_service_gateways(upsf_service_gateway_t* elems, size_t n_elems) {
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   std::vector<wt474_messages::v1::ServiceGateway> service_gateways;
 
@@ -490,11 +496,12 @@ upsf_service_gateway_user_plane_t* upsf_create_service_gateway_user_plane(upsf_s
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::ServiceGatewayUserPlane request;
   wt474_messages::v1::ServiceGatewayUserPlane reply;
@@ -525,11 +532,12 @@ upsf_service_gateway_user_plane_t* upsf_update_service_gateway_user_plane(upsf_s
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_upsf_service::v1::UpdateReq::UpdateOptions update_options;
   wt474_messages::v1::ServiceGatewayUserPlane request;
@@ -561,11 +569,12 @@ upsf_service_gateway_user_plane_t* upsf_get_service_gateway_user_plane(upsf_serv
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::ServiceGatewayUserPlane reply;
   VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_service_gateway_user_plane->name.str << std::endl;
@@ -599,11 +608,12 @@ int upsf_delete_service_gateway_user_plane(upsf_service_gateway_user_plane_t *up
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   google::protobuf::StringValue req;
   google::protobuf::StringValue reply;
@@ -629,11 +639,12 @@ int upsf_list_service_gateway_user_planes(upsf_service_gateway_user_plane_t* ele
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   std::vector<wt474_messages::v1::ServiceGatewayUserPlane> service_gateway_user_planes;
 
@@ -690,11 +701,12 @@ upsf_traffic_steering_function_t* upsf_create_traffic_steering_function(upsf_tra
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::TrafficSteeringFunction request;
   wt474_messages::v1::TrafficSteeringFunction reply;
@@ -725,11 +737,12 @@ upsf_traffic_steering_function_t* upsf_update_traffic_steering_function(upsf_tra
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_upsf_service::v1::UpdateReq::UpdateOptions update_options;
   wt474_messages::v1::TrafficSteeringFunction request;
@@ -761,11 +774,12 @@ upsf_traffic_steering_function_t* upsf_get_traffic_steering_function(upsf_traffi
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::TrafficSteeringFunction reply;
   VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_traffic_steering_function->name.str << std::endl;
@@ -799,11 +813,12 @@ int upsf_delete_traffic_steering_function(upsf_traffic_steering_function_t *upsf
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   google::protobuf::StringValue req;
   google::protobuf::StringValue reply;
@@ -829,11 +844,12 @@ int upsf_list_traffic_steering_functions(upsf_traffic_steering_function_t* elems
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   std::vector<wt474_messages::v1::TrafficSteeringFunction> traffic_steering_functions;
 
@@ -890,11 +906,12 @@ upsf_network_connection_t* upsf_create_network_connection(upsf_network_connectio
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::NetworkConnection request;
   wt474_messages::v1::NetworkConnection reply;
@@ -925,11 +942,12 @@ upsf_network_connection_t* upsf_update_network_connection(upsf_network_connectio
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_upsf_service::v1::UpdateReq::UpdateOptions update_options;
   wt474_messages::v1::NetworkConnection request;
@@ -961,11 +979,12 @@ upsf_network_connection_t* upsf_get_network_connection(upsf_network_connection_t
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::NetworkConnection reply;
   VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_network_connection->name.str << std::endl;
@@ -999,11 +1018,12 @@ int upsf_delete_network_connection(upsf_network_connection_t *upsf_network_conne
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   google::protobuf::StringValue req;
   google::protobuf::StringValue reply;
@@ -1029,11 +1049,12 @@ int upsf_list_network_connections(upsf_network_connection_t* elems, size_t n_ele
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   std::vector<wt474_messages::v1::NetworkConnection> network_connections;
 
@@ -1090,11 +1111,12 @@ upsf_shard_t* upsf_create_shard(upsf_shard_t* shard)
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::Shard request;
   wt474_messages::v1::Shard reply;
@@ -1125,11 +1147,12 @@ upsf_shard_t* upsf_update_shard(upsf_shard_t* shard)
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_upsf_service::v1::UpdateReq::UpdateOptions update_options;
   wt474_messages::v1::Shard request;
@@ -1161,11 +1184,12 @@ upsf_shard_t* upsf_get_shard(upsf_shard_t *upsf_shard)
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::Shard reply;
   VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_shard->name.str << std::endl;
@@ -1199,11 +1223,12 @@ int upsf_delete_shard(upsf_shard_t *upsf_shard)
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   google::protobuf::StringValue req;
   google::protobuf::StringValue reply;
@@ -1229,11 +1254,12 @@ int upsf_list_shards(upsf_shard_t* elems, size_t n_elems) {
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   std::vector<wt474_messages::v1::Shard> shards;
 
@@ -1290,11 +1316,12 @@ upsf_session_context_t* upsf_create_session_context(upsf_session_context_t* sess
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::SessionContext request;
   wt474_messages::v1::SessionContext reply;
@@ -1325,11 +1352,12 @@ upsf_session_context_t* upsf_update_session_context(upsf_session_context_t* sess
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_upsf_service::v1::UpdateReq::UpdateOptions update_options;
   wt474_messages::v1::SessionContext request;
@@ -1361,11 +1389,12 @@ upsf_session_context_t* upsf_get_session_context(upsf_session_context_t *upsf_se
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::SessionContext reply;
   VLOG(1) << "libupsf: " << __PRETTY_FUNCTION__ << " request=" << upsf_session_context->name.str << std::endl;
@@ -1399,11 +1428,12 @@ int upsf_delete_session_context(upsf_session_context_t *upsf_session_context)
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   google::protobuf::StringValue req;
   google::protobuf::StringValue reply;
@@ -1429,11 +1459,12 @@ int upsf_list_session_contexts(upsf_session_context_t* elems, size_t n_elems) {
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return -1;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   std::vector<wt474_messages::v1::SessionContext> session_contexts;
 
@@ -1490,11 +1521,12 @@ upsf_session_context_t* upsf_lookup(upsf_session_context_t *upsf_session_context
 
   /* get UpsfSlot instance */
   pthread_t tid = pthread_self();
-  std::unique_lock rlock(upsf_slots_mutex);
+  std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(tid) == upsf_slots.end()) {
     return nullptr;
   }
   UpsfSlot* slot = upsf_slots[tid].get();
+  std::unique_lock slock(slot->upsf_slot_mutex);
 
   wt474_messages::v1::SessionContext::Spec request;
   wt474_messages::v1::SessionContext reply;
