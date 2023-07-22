@@ -262,16 +262,16 @@ int upsf_close() {
  * upsf connection exists?
  *
  * return values:
- * (0) UpsfSlot for this thread already exists
- * (-1) UpsfSlot does not exist yet
+ * (1) UpsfSlot for this thread already exists
+ * (0) UpsfSlot does not exist yet
  */
 int upsf_exists() {
 
   std::shared_lock rlock(upsf_slots_mutex);
   if (upsf_slots.find(pthread_self()) == upsf_slots.end()) {
-    return -1;
+    return 0;
   }
-  return 0;
+  return 1;
 }
 
 
