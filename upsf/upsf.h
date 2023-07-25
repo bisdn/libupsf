@@ -164,7 +164,7 @@ typedef struct {
 
 /* message: network_connection.spec */
 typedef struct {
-    int maximum_supported_quality;    
+    int maximum_supported_quality;
     enum upsf_nc_spec_type_t nc_spec_type;
     union nc_spec_u {
         upsf_network_connection_spec_ss_ptp_spec_t ss_ptp;
@@ -340,8 +340,9 @@ upsf_handle_t upsf_open(
     const char* upsf_host,
     const int upsf_port);
 
-int upsf_close(
-    upsf_handle_t upsf_handle);
+int upsf_close();
+
+int upsf_exists();
 
 const char* upsf_derived_state_to_name(int derived_state);
 const char* upsf_item_type_to_name(int item_type);
@@ -350,23 +351,18 @@ const char* upsf_mbb_state_to_name(int mbb_state);
 
 /* service_gateway */
 upsf_service_gateway_t* upsf_create_service_gateway(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_t* service_gateway);
 
 upsf_service_gateway_t* upsf_update_service_gateway(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_t* service_gateway);
 
 upsf_service_gateway_t* upsf_get_service_gateway(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_t* service_gateway);
 
 int upsf_delete_service_gateway(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_t* service_gateway);
 
 int upsf_list_service_gateways(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_t* elems, size_t n_elems);
 
 char* upsf_dump_service_gateway(
@@ -375,23 +371,18 @@ char* upsf_dump_service_gateway(
 
 /* service_gateway_user_plane */
 upsf_service_gateway_user_plane_t* upsf_create_service_gateway_user_plane(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_user_plane_t* service_gateway_user_plane);
 
 upsf_service_gateway_user_plane_t* upsf_update_service_gateway_user_plane(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_user_plane_t* service_gateway_user_plane);
 
 upsf_service_gateway_user_plane_t* upsf_get_service_gateway_user_plane(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_user_plane_t* service_gateway_user_plane);
 
 int upsf_delete_service_gateway_user_plane(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_user_plane_t* service_gateway_user_plane);
 
 int upsf_list_service_gateway_user_planes(
-    upsf_handle_t upsf_handle,
     upsf_service_gateway_user_plane_t* elems, size_t n_elems);
 
 char* upsf_dump_service_gateway_user_plane(
@@ -400,23 +391,18 @@ char* upsf_dump_service_gateway_user_plane(
 
 /* traffic_steering_function */
 upsf_traffic_steering_function_t* upsf_create_traffic_steering_function(
-    upsf_handle_t upsf_handle,
     upsf_traffic_steering_function_t* traffic_steering_function);
 
 upsf_traffic_steering_function_t* upsf_update_traffic_steering_function(
-    upsf_handle_t upsf_handle,
     upsf_traffic_steering_function_t* traffic_steering_function);
 
 upsf_traffic_steering_function_t* upsf_get_traffic_steering_function(
-    upsf_handle_t upsf_handle,
     upsf_traffic_steering_function_t* traffic_steering_function);
 
 int upsf_delete_traffic_steering_function(
-    upsf_handle_t upsf_handle,
     upsf_traffic_steering_function_t* traffic_steering_function);
 
 int upsf_list_traffic_steering_functions(
-    upsf_handle_t upsf_handle,
     upsf_traffic_steering_function_t* elems, size_t n_elems);
 
 char* upsf_dump_traffic_steering_function(
@@ -425,23 +411,18 @@ char* upsf_dump_traffic_steering_function(
 
 /* network_connection */
 upsf_network_connection_t* upsf_create_network_connection(
-    upsf_handle_t upsf_handle,
     upsf_network_connection_t* network_connection);
 
 upsf_network_connection_t* upsf_update_network_connection(
-    upsf_handle_t upsf_handle,
     upsf_network_connection_t* network_connection);
 
 upsf_network_connection_t* upsf_get_network_connection(
-    upsf_handle_t upsf_handle,
     upsf_network_connection_t* network_connection);
 
 int upsf_delete_network_connection(
-    upsf_handle_t upsf_handle,
     upsf_network_connection_t* network_connection);
 
 int upsf_list_network_connections(
-    upsf_handle_t upsf_handle,
     upsf_network_connection_t* elems, size_t n_elems);
 
 char* upsf_dump_network_connection(
@@ -450,23 +431,18 @@ char* upsf_dump_network_connection(
 
 /* shard */
 upsf_shard_t* upsf_create_shard(
-    upsf_handle_t upsf_handle,
     upsf_shard_t* shard);
 
 upsf_shard_t* upsf_update_shard(
-    upsf_handle_t upsf_handle,
     upsf_shard_t* shard);
 
 upsf_shard_t* upsf_get_shard(
-    upsf_handle_t upsf_handle,
     upsf_shard_t* shard);
 
 int upsf_delete_shard(
-    upsf_handle_t upsf_handle,
     upsf_shard_t* shard);
 
 int upsf_list_shards(
-    upsf_handle_t upsf_handle,
     upsf_shard_t* elems, size_t n_elems);
 
 char* upsf_dump_shard(
@@ -475,23 +451,18 @@ char* upsf_dump_shard(
 
 /* session_context */
 upsf_session_context_t* upsf_create_session_context(
-    upsf_handle_t upsf_handle,
     upsf_session_context_t* session_context);
 
 upsf_session_context_t* upsf_update_session_context(
-    upsf_handle_t upsf_handle,
     upsf_session_context_t* session_context);
 
 upsf_session_context_t* upsf_get_session_context(
-    upsf_handle_t upsf_handle,
     upsf_session_context_t* session_context);
 
 int upsf_delete_session_context(
-    upsf_handle_t upsf_handle,
     upsf_session_context_t* session_context);
 
 int upsf_list_session_contexts(
-    upsf_handle_t upsf_handle,
     upsf_session_context_t* elems, size_t n_elems);
 
 char* upsf_dump_session_context(
@@ -500,12 +471,12 @@ char* upsf_dump_session_context(
 
 /* lookup */
 upsf_session_context_t* upsf_lookup(
-    upsf_handle_t upsf_handle,
     upsf_session_context_t* session_context);
 
 /* subscribe */
 int upsf_subscribe(
-    upsf_handle_t upsf_handle,
+    const char* upsf_host,
+    const int upsf_port,
     void* userdata,
     upsf_shard_cb_t upsf_shard_cb,
     upsf_session_context_cb_t upsf_session_context_cb,

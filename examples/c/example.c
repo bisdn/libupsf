@@ -7,7 +7,7 @@
 /*******************************************************
  * ServiceGateway
  *******************************************************/
-int list_service_gateways(upsf_handle_t upsf_handle)
+int list_service_gateways()
 {
   char buf[1024];
   size_t buflen = sizeof(buf) - 1;
@@ -15,7 +15,7 @@ int list_service_gateways(upsf_handle_t upsf_handle)
   int n_elems = 0;
 
   /* list service gateways */
-  if ((n_elems = upsf_list_service_gateways(upsf_handle, service_gateways, 64)) < 0) {
+  if ((n_elems = upsf_list_service_gateways(service_gateways, 64)) < 0) {
     return -1;
   }
 
@@ -36,18 +36,18 @@ void dump_service_gateway(const char* intro, upsf_service_gateway_t *service_gat
     upsf_dump_service_gateway(buf, buflen, service_gateway));
 }
 
-int test_service_gateway(upsf_handle_t upsf_handle)
+int test_service_gateway()
 {
   upsf_service_gateway_t service_gateway;
   memset(&service_gateway, 0, sizeof(service_gateway));
 
-  list_service_gateways(upsf_handle);
+  list_service_gateways();
 
 
   /* create service gateway */
   snprintf(service_gateway.name.str, sizeof(service_gateway.name.str), "sg-test");
 
-  if (upsf_create_service_gateway(upsf_handle, &service_gateway) == NULL) {
+  if (upsf_create_service_gateway(&service_gateway) == NULL) {
     return -1;
   }
   dump_service_gateway("CREATE service_gateway:", &service_gateway);
@@ -57,7 +57,7 @@ int test_service_gateway(upsf_handle_t upsf_handle)
   snprintf(service_gateway.name.str, sizeof(service_gateway.name.str), "sg-test");
   snprintf(service_gateway.metadata.description.str, sizeof(service_gateway.metadata.description.str), "sg-test description");
 
-  if (upsf_update_service_gateway(upsf_handle, &service_gateway) == NULL) {
+  if (upsf_update_service_gateway(&service_gateway) == NULL) {
     return -1;
   }
   dump_service_gateway("UPDATE service_gateway:", &service_gateway);
@@ -66,25 +66,25 @@ int test_service_gateway(upsf_handle_t upsf_handle)
   /* read service gateway */
   snprintf(service_gateway.name.str, sizeof(service_gateway.name.str), "sg-test");
 
-  if (upsf_get_service_gateway(upsf_handle, &service_gateway) < 0) {
+  if (upsf_get_service_gateway(&service_gateway) < 0) {
     return -1;
   }
   dump_service_gateway("GET service_gateway:", &service_gateway);
 
 
   /* list service gateways */
-  list_service_gateways(upsf_handle);
+  list_service_gateways();
 
 
   /* delete service gateway */
-  if (upsf_delete_service_gateway(upsf_handle, &service_gateway) < 0) {
+  if (upsf_delete_service_gateway(&service_gateway) < 0) {
     return -1;
   }
   dump_service_gateway("DELETE service_gateway:", &service_gateway);
 
 
   /* list service gateways */
-  list_service_gateways(upsf_handle);
+  list_service_gateways();
 
   return 0;
 }
@@ -92,7 +92,7 @@ int test_service_gateway(upsf_handle_t upsf_handle)
 /*******************************************************
  * ServiceGatewayUserPlane
  *******************************************************/
-int list_service_gateway_user_planes(upsf_handle_t upsf_handle)
+int list_service_gateway_user_planes()
 {
   char buf[1024];
   size_t buflen = sizeof(buf) - 1;
@@ -100,7 +100,7 @@ int list_service_gateway_user_planes(upsf_handle_t upsf_handle)
   int n_elems = 0;
 
   /* list service gateways */
-  if ((n_elems = upsf_list_service_gateway_user_planes(upsf_handle, service_gateway_user_planes, 64)) < 0) {
+  if ((n_elems = upsf_list_service_gateway_user_planes(service_gateway_user_planes, 64)) < 0) {
     return -1;
   }
 
@@ -121,18 +121,18 @@ void dump_service_gateway_user_plane(const char* intro, upsf_service_gateway_use
     upsf_dump_service_gateway_user_plane(buf, buflen, service_gateway_user_plane));
 }
 
-int test_service_gateway_user_plane(upsf_handle_t upsf_handle)
+int test_service_gateway_user_plane()
 {
   upsf_service_gateway_user_plane_t service_gateway_user_plane;
   memset(&service_gateway_user_plane, 0, sizeof(service_gateway_user_plane));
 
-  list_service_gateway_user_planes(upsf_handle);
+  list_service_gateway_user_planes();
 
 
   /* create service gateway */
   snprintf(service_gateway_user_plane.name.str, sizeof(service_gateway_user_plane.name.str), "up-test");
 
-  if (upsf_create_service_gateway_user_plane(upsf_handle, &service_gateway_user_plane) == NULL) {
+  if (upsf_create_service_gateway_user_plane(&service_gateway_user_plane) == NULL) {
     return -1;
   }
   dump_service_gateway_user_plane("CREATE service_gateway_user_plane:", &service_gateway_user_plane);
@@ -142,7 +142,7 @@ int test_service_gateway_user_plane(upsf_handle_t upsf_handle)
   snprintf(service_gateway_user_plane.name.str, sizeof(service_gateway_user_plane.name.str), "up-test");
   snprintf(service_gateway_user_plane.metadata.description.str, sizeof(service_gateway_user_plane.metadata.description.str), "up-test description");
 
-  if (upsf_update_service_gateway_user_plane(upsf_handle, &service_gateway_user_plane) == NULL) {
+  if (upsf_update_service_gateway_user_plane(&service_gateway_user_plane) == NULL) {
     return -1;
   }
   dump_service_gateway_user_plane("UPDATE service_gateway_user_plane:", &service_gateway_user_plane);
@@ -151,25 +151,25 @@ int test_service_gateway_user_plane(upsf_handle_t upsf_handle)
   /* read service gateway */
   snprintf(service_gateway_user_plane.name.str, sizeof(service_gateway_user_plane.name.str), "up-test");
 
-  if (upsf_get_service_gateway_user_plane(upsf_handle, &service_gateway_user_plane) < 0) {
+  if (upsf_get_service_gateway_user_plane(&service_gateway_user_plane) < 0) {
     return -1;
   }
   dump_service_gateway_user_plane("GET service_gateway_user_plane:", &service_gateway_user_plane);
 
 
   /* list service gateways */
-  list_service_gateway_user_planes(upsf_handle);
+  list_service_gateway_user_planes();
 
 
   /* delete service gateway */
-  if (upsf_delete_service_gateway_user_plane(upsf_handle, &service_gateway_user_plane) < 0) {
+  if (upsf_delete_service_gateway_user_plane(&service_gateway_user_plane) < 0) {
     return -1;
   }
   dump_service_gateway_user_plane("DELETE service_gateway_user_plane:", &service_gateway_user_plane);
 
 
   /* list service gateways */
-  list_service_gateway_user_planes(upsf_handle);
+  list_service_gateway_user_planes();
 
   return 0;
 }
@@ -177,7 +177,7 @@ int test_service_gateway_user_plane(upsf_handle_t upsf_handle)
 /*******************************************************
  * Shard
  *******************************************************/
-int list_shards(upsf_handle_t upsf_handle)
+int list_shards()
 {
   char buf[1024];
   size_t buflen = sizeof(buf) - 1;
@@ -185,7 +185,7 @@ int list_shards(upsf_handle_t upsf_handle)
   int n_elems = 0;
 
   /* list shards */
-  if ((n_elems = upsf_list_shards(upsf_handle, shards, 64)) < 0) {
+  if ((n_elems = upsf_list_shards(shards, 64)) < 0) {
     return -1;
   }
 
@@ -206,18 +206,18 @@ void dump_shard(const char* intro, upsf_shard_t *shard)
     upsf_dump_shard(buf, buflen, shard));
 }
 
-int test_shard(upsf_handle_t upsf_handle)
+int test_shard()
 {
   upsf_shard_t shard;
   memset(&shard, 0, sizeof(shard));
 
-  list_shards(upsf_handle);
+  list_shards();
 
 
   /* create shard */
   snprintf(shard.name.str, sizeof(shard.name.str), "shard-test");
 
-  if (upsf_create_shard(upsf_handle, &shard) == NULL) {
+  if (upsf_create_shard(&shard) == NULL) {
     return -1;
   }
   dump_shard("CREATE shard:", &shard);
@@ -227,7 +227,7 @@ int test_shard(upsf_handle_t upsf_handle)
   snprintf(shard.name.str, sizeof(shard.name.str), "shard-test");
   snprintf(shard.metadata.description.str, sizeof(shard.metadata.description.str), "shard-test description");
 
-  if (upsf_update_shard(upsf_handle, &shard) == NULL) {
+  if (upsf_update_shard(&shard) == NULL) {
     return -1;
   }
   dump_shard("UPDATE shard:", &shard);
@@ -236,25 +236,25 @@ int test_shard(upsf_handle_t upsf_handle)
   /* read shard */
   snprintf(shard.name.str, sizeof(shard.name.str), "shard-test");
 
-  if (upsf_get_shard(upsf_handle, &shard) < 0) {
+  if (upsf_get_shard(&shard) < 0) {
     return -1;
   }
   dump_shard("GET shard:", &shard);
 
 
   /* list shards */
-  list_shards(upsf_handle);
+  list_shards();
 
 
   /* delete shard */
-  if (upsf_delete_shard(upsf_handle, &shard) < 0) {
+  if (upsf_delete_shard(&shard) < 0) {
     return -1;
   }
   dump_shard("DELETE shard:", &shard);
 
 
   /* list shards */
-  list_shards(upsf_handle);
+  list_shards();
 
   return 0;
 }
@@ -262,7 +262,7 @@ int test_shard(upsf_handle_t upsf_handle)
 /*******************************************************
  * SessionContext
  *******************************************************/
-int list_session_contexts(upsf_handle_t upsf_handle)
+int list_session_contexts()
 {
   char buf[1024];
   size_t buflen = sizeof(buf) - 1;
@@ -270,7 +270,7 @@ int list_session_contexts(upsf_handle_t upsf_handle)
   int n_elems = 0;
 
   /* list session_contexts */
-  if ((n_elems = upsf_list_session_contexts(upsf_handle, session_contexts, 64)) < 0) {
+  if ((n_elems = upsf_list_session_contexts(session_contexts, 64)) < 0) {
     return -1;
   }
 
@@ -291,18 +291,18 @@ void dump_session_context(const char* intro, upsf_session_context_t *session_con
     upsf_dump_session_context(buf, buflen, session_context));
 }
 
-int test_session_context(upsf_handle_t upsf_handle)
+int test_session_context()
 {
   upsf_session_context_t session_context;
   memset(&session_context, 0, sizeof(session_context));
 
-  list_session_contexts(upsf_handle);
+  list_session_contexts();
 
 
   /* create session_context */
   snprintf(session_context.name.str, sizeof(session_context.name.str), "session-context-test");
 
-  if (upsf_create_session_context(upsf_handle, &session_context) == NULL) {
+  if (upsf_create_session_context(&session_context) == NULL) {
     return -1;
   }
   dump_session_context("CREATE session_context:", &session_context);
@@ -312,7 +312,7 @@ int test_session_context(upsf_handle_t upsf_handle)
   snprintf(session_context.name.str, sizeof(session_context.name.str), "session-context-test");
   snprintf(session_context.metadata.description.str, sizeof(session_context.metadata.description.str), "session-context-test description");
 
-  if (upsf_update_session_context(upsf_handle, &session_context) == NULL) {
+  if (upsf_update_session_context(&session_context) == NULL) {
     return -1;
   }
   dump_session_context("UPDATE session_context:", &session_context);
@@ -321,25 +321,25 @@ int test_session_context(upsf_handle_t upsf_handle)
   /* read session_context */
   snprintf(session_context.name.str, sizeof(session_context.name.str), "session-context-test");
 
-  if (upsf_get_session_context(upsf_handle, &session_context) < 0) {
+  if (upsf_get_session_context(&session_context) < 0) {
     return -1;
   }
   dump_session_context("GET session_context:", &session_context);
 
 
   /* list session_contexts */
-  list_session_contexts(upsf_handle);
+  list_session_contexts();
 
 
   /* delete session_context */
-  if (upsf_delete_session_context(upsf_handle, &session_context) < 0) {
+  if (upsf_delete_session_context(&session_context) < 0) {
     return -1;
   }
   dump_session_context("DELETE session_context:", &session_context);
 
 
   /* list session_contexts */
-  list_session_contexts(upsf_handle);
+  list_session_contexts();
 
   return 0;
 }
@@ -384,11 +384,11 @@ int traffic_steering_function_cb(upsf_traffic_steering_function_t* data, void* u
 }
 
 
-int test_subscribe(upsf_handle_t upsf_handle) {
+int test_subscribe() {
 
   void *userdata = NULL;
 
-  if (upsf_subscribe(upsf_handle, userdata, &shard_cb, &session_context_cb, &network_connection_cb, &service_gateway_user_plane_cb, &traffic_steering_function_cb, &service_gateway_cb) < 0) {
+  if (upsf_subscribe("127.0.0.1", 50051, userdata, &shard_cb, &session_context_cb, &network_connection_cb, &service_gateway_user_plane_cb, &traffic_steering_function_cb, &service_gateway_cb) < 0) {
     return -1;
   }
 
@@ -403,36 +403,34 @@ int main(char* argv, int argc) {
 
   char* upsf_host = "127.0.0.1";
   int upsf_port = 50051;
-  upsf_handle_t upsf_handle = -1;
 
   /* open upsf connection */
-  if ((upsf_handle = upsf_open(upsf_host, upsf_port)) < 0) {
-    return -1;
-  }
-  fprintf(stderr, "upsf_handle=%d\n", upsf_handle);
-
-  if (test_service_gateway(upsf_handle) < 0) {
+  if ((upsf_open(upsf_host, upsf_port)) < 0) {
     return -1;
   }
 
-  if (test_service_gateway_user_plane(upsf_handle) < 0) {
+  if (test_service_gateway() < 0) {
     return -1;
   }
 
-  if (test_shard(upsf_handle) < 0) {
+  if (test_service_gateway_user_plane() < 0) {
     return -1;
   }
 
-  if (test_session_context(upsf_handle) < 0) {
+  if (test_shard() < 0) {
     return -1;
   }
 
-  if (test_subscribe(upsf_handle) < 0) {
+  if (test_session_context() < 0) {
+    return -1;
+  }
+
+  if (test_subscribe() < 0) {
     return -1;
   }
 
   /* close upsf connection */
-  if (upsf_close(upsf_handle) < 0) {
+  if (upsf_close() < 0) {
     return -1;
   }
 
