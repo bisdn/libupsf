@@ -5,6 +5,7 @@ find_library(LIBGRPCPP grpc++ REQUIRED)
 find_library(LIBGRPC grpc REQUIRED)
 find_library(LIBGFLAGS gflags REQUIRED)
 find_library(LIBGLOG glog REQUIRED)
+find_library(LIBABSL_LOG_INTERNAL_CHECK_OP absl_log_internal_check_op REQUIRED)
 
 # Proto compiler for cpp
 find_program(PROTOBUF_PROTOC protoc)
@@ -74,6 +75,7 @@ target_link_libraries(upsf++
   PUBLIC ${LIBGRPCPP}
   PUBLIC ${LIBGFLAGS}
   PUBLIC ${LIBGLOG}
+  PUBLIC ${LIBABSL_LOG_INTERNAL_CHECK_OP}
   )
 configure_file(upsf++.pc.in upsf++.pc @ONLY) 
  
