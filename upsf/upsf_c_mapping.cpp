@@ -1,10 +1,44 @@
+/* upsf_c_mapping.cpp
+ *
+ * BSD 3-Clause License
+ *
+ * Copyright (c) 2022, bisdn GmbH
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived from
+ *    this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 #include "upsf_c_mapping.hpp"
 #include "upsf_stream.hpp"
 
 using namespace upsf;
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::ServiceGateway& from,
     upsf_service_gateway_t& to)
 {
@@ -31,8 +65,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_service_gateway_t& from,
     wt474_messages::v1::ServiceGateway& to)
 {
@@ -52,8 +85,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::ServiceGatewayUserPlane& from,
     upsf_service_gateway_user_plane_t& to)
 {
@@ -96,8 +128,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_service_gateway_user_plane_t& from,
     wt474_messages::v1::ServiceGatewayUserPlane& to)
 {
@@ -131,14 +162,13 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::ServiceGatewayUserPlane::Spec& from,
     upsf_service_gateway_user_plane_spec_t& to)
 {
     /* service_gateway_user_plane: spec: init */
     memset(&to, 0, sizeof(to));
- 
+
     /* service_gateway_user_plane: spec: max_session_count */
     to.max_session_count = from.max_session_count();
 
@@ -166,8 +196,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_service_gateway_user_plane_spec_t& from,
     wt474_messages::v1::ServiceGatewayUserPlane::Spec& to)
 {
@@ -190,14 +219,13 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::ServiceGatewayUserPlane::Status& from,
     upsf_service_gateway_user_plane_status_t& to)
 {
     /* service_gateway_user_plane: status: init */
     memset(&to, 0, sizeof(to));
- 
+
     /* service_gateway_user_plane: status: allocated_session_count */
     to.allocated_session_count = from.allocated_session_count();
 
@@ -207,8 +235,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_service_gateway_user_plane_status_t& from,
     wt474_messages::v1::ServiceGatewayUserPlane::Status& to)
 {
@@ -223,8 +250,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::TrafficSteeringFunction& from,
     upsf_traffic_steering_function_t& to)
 {
@@ -254,8 +280,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_traffic_steering_function_t& from,
     wt474_messages::v1::TrafficSteeringFunction& to)
 {
@@ -278,8 +303,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::TrafficSteeringFunction::Spec& from,
     upsf_traffic_steering_function_spec_t& to)
 {
@@ -292,8 +316,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_traffic_steering_function_spec_t& from,
     wt474_messages::v1::TrafficSteeringFunction::Spec& to)
 {
@@ -303,8 +326,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::NetworkConnection& from,
     upsf_network_connection_t& to)
 {
@@ -340,8 +362,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_network_connection_t& from,
     wt474_messages::v1::NetworkConnection& to)
 {
@@ -372,8 +393,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_network_connection_spec_t& from,
     wt474_messages::v1::NetworkConnection::Spec& to)
 {
@@ -455,8 +475,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::NetworkConnection::Spec& from,
     upsf_network_connection_spec_t& to)
 {
@@ -489,7 +508,7 @@ UpsfMapping::map(
             from.ss_ptp().tsf_endpoint(),
             to.nc_spec.ss_ptp.tsf_endpoint);
 
-    /* network_connection: spec: ss_mptp */
+        /* network_connection: spec: ss_mptp */
     } else if (from.has_ss_mptpc()) {
 
         to.nc_spec_type = UPSF_NC_SPEC_TYPE_SS_MPTP;
@@ -520,7 +539,7 @@ UpsfMapping::map(
             LOG(WARNING) << "libupsf: " << __PRETTY_FUNCTION__ << " too many entries for tsf endpoints of type ss-mptp, max number supported=" << UPSF_MAX_NUM_ENDPOINTS << ", from: " << upsf::NetworkConnectionSpecStream(from) << std::endl;
         }
 
-    /* network_connection: spec: ms_ptp */
+        /* network_connection: spec: ms_ptp */
     } else if (from.has_ms_ptp()) {
 
         to.nc_spec_type = UPSF_NC_SPEC_TYPE_MS_PTP;
@@ -535,7 +554,7 @@ UpsfMapping::map(
             from.ms_ptp().tsf_endpoint(),
             to.nc_spec.ms_ptp.tsf_endpoint);
 
-    /* network_connection: spec: ms_mptp */
+        /* network_connection: spec: ms_mptp */
     } else if (from.has_ms_mptp()) {
 
         to.nc_spec_type = UPSF_NC_SPEC_TYPE_MS_MPTP;
@@ -562,8 +581,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::NetworkConnection::Status& from,
     upsf_network_connection_status_t& to)
 {
@@ -607,8 +625,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_network_connection_status_t& from,
     wt474_messages::v1::NetworkConnection::Status& to)
 {
@@ -623,8 +640,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::Shard& from,
     upsf_shard_t& to)
 {
@@ -660,8 +676,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_shard_t& from,
     wt474_messages::v1::Shard& to)
 {
@@ -690,8 +705,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::Shard::Spec& from,
     upsf_shard_spec_t& to)
 {
@@ -729,8 +743,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_shard_spec_t& from,
     wt474_messages::v1::Shard::Spec& to)
 {
@@ -756,8 +769,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::Shard::Spec::DesiredState& from,
     upsf_shard_spec_desired_state_t& to)
 {
@@ -789,8 +801,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_shard_spec_desired_state_t& from,
     wt474_messages::v1::Shard::Spec::DesiredState& to)
 {
@@ -809,8 +820,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::Shard::Status& from,
     upsf_shard_status_t& to)
 {
@@ -844,8 +854,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_shard_status_t& from,
     wt474_messages::v1::Shard::Status& to)
 {
@@ -870,8 +879,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::Shard::Status::CurrentState& from,
     upsf_shard_status_current_state_t& to)
 {
@@ -913,8 +921,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_shard_status_current_state_t& from,
     wt474_messages::v1::Shard::Status::CurrentState& to)
 {
@@ -925,16 +932,13 @@ UpsfMapping::map(
 
     /* shard: status: current_state: tsf_network_connection */
     for (int i = 0; i < from.tsf_network_connection_size; i++) {
-        (*to.mutable_tsf_network_connection())[
-            from.tsf_network_connection[i].key.str] = 
-                from.tsf_network_connection[i].value.str;
+        (*to.mutable_tsf_network_connection())[from.tsf_network_connection[i].key.str] = from.tsf_network_connection[i].value.str;
     }
 
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::Shard::Mbb& from,
     upsf_shard_mbb_t& to)
 {
@@ -947,8 +951,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_shard_mbb_t& from,
     wt474_messages::v1::Shard::Mbb& to)
 {
@@ -960,8 +963,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::NetworkConnection::Spec::Endpoint& from,
     upsf_network_connection_spec_endpoint_t& to)
 {
@@ -981,19 +983,19 @@ UpsfMapping::map(
         UpsfMapping::map(from.vtep(), to.ep_spec.vtep);
         to.ep_type = UPSF_EP_TYPE_VTEP;
 
-    /* endpoint: l2vpn */
+        /* endpoint: l2vpn */
     } else if (from.has_l2vpn()) {
 
         UpsfMapping::map(from.l2vpn(), to.ep_spec.l2vpn);
         to.ep_type = UPSF_EP_TYPE_L2VPN;
 
-    /* endpoint: port_vlan */
+        /* endpoint: port_vlan */
     } else if (from.has_port_vlan()) {
 
         UpsfMapping::map(from.port_vlan(), to.ep_spec.port_vlan);
         to.ep_type = UPSF_EP_TYPE_PORT_VLAN;
 
-    /* endpoint: unknown */
+        /* endpoint: unknown */
     } else {
 
         return false;
@@ -1002,8 +1004,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_network_connection_spec_endpoint_t& from,
     wt474_messages::v1::NetworkConnection::Spec::Endpoint& to)
 {
@@ -1031,8 +1032,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::Vtep& from,
     upsf_vtep_t& to)
 {
@@ -1055,8 +1055,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_vtep_t& from,
     wt474_messages::v1::Vtep& to)
 {
@@ -1072,8 +1071,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::L2vpn& from,
     upsf_l2vpn_t& to)
 {
@@ -1086,8 +1084,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_l2vpn_t& from,
     wt474_messages::v1::L2vpn& to)
 {
@@ -1097,8 +1094,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::PortVlan& from,
     upsf_port_vlan_t& to)
 {
@@ -1121,8 +1117,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_port_vlan_t& from,
     wt474_messages::v1::PortVlan& to)
 {
@@ -1138,8 +1133,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::SessionContext& from,
     upsf_session_context_t& to)
 {
@@ -1172,8 +1166,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_session_context_t& from,
     wt474_messages::v1::SessionContext& to)
 {
@@ -1199,8 +1192,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::SessionContext::Spec& from,
     upsf_session_context_spec_t& to)
 {
@@ -1252,10 +1244,10 @@ UpsfMapping::map(
     to.remote_id.len = strlen(to.remote_id.str);
 
     /* session_context: spec: session_filter */
-    UpsfMapping::map(from.session_filter(), to.session_filter); 
+    UpsfMapping::map(from.session_filter(), to.session_filter);
 
     /* session_context: spec: desired_state */
-    UpsfMapping::map(from.desired_state(), to.desired_state); 
+    UpsfMapping::map(from.desired_state(), to.desired_state);
 
     /* session_context: spec: network_connection */
     strncpy(
@@ -1267,8 +1259,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_session_context_spec_t& from,
     wt474_messages::v1::SessionContext::Spec& to)
 {
@@ -1291,10 +1282,10 @@ UpsfMapping::map(
     to.set_remote_id(std::string(from.remote_id.str));
 
     /* session_context: spec: session_filter */
-    UpsfMapping::map(from.session_filter, *to.mutable_session_filter()); 
+    UpsfMapping::map(from.session_filter, *to.mutable_session_filter());
 
     /* session_context: spec: desired_state */
-    UpsfMapping::map(from.desired_state, *to.mutable_desired_state()); 
+    UpsfMapping::map(from.desired_state, *to.mutable_desired_state());
 
     /* session_context: spec: network_connection */
     to.set_network_connection(std::string(from.network_connection.str));
@@ -1302,8 +1293,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::SessionContext::Spec::DesiredState& from,
     upsf_session_context_spec_desired_state_t& to)
 {
@@ -1320,8 +1310,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_session_context_spec_desired_state_t& from,
     wt474_messages::v1::SessionContext::Spec::DesiredState& to)
 {
@@ -1331,8 +1320,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::SessionFilter& from,
     upsf_session_filter_t& to)
 {
@@ -1355,8 +1343,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_session_filter_t& from,
     wt474_messages::v1::SessionFilter& to)
 {
@@ -1372,8 +1359,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::SessionContext::Status& from,
     upsf_session_context_status_t& to)
 {
@@ -1381,24 +1367,22 @@ UpsfMapping::map(
     memset(&to, 0, sizeof(to));
 
     /* session_context: status: current_state */
-    UpsfMapping::map(from.current_state(), to.current_state); 
+    UpsfMapping::map(from.current_state(), to.current_state);
 
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_session_context_status_t& from,
     wt474_messages::v1::SessionContext::Status& to)
 {
     /* session_context: status: current_state */
-    UpsfMapping::map(from.current_state, *to.mutable_current_state()); 
+    UpsfMapping::map(from.current_state, *to.mutable_current_state());
 
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const wt474_messages::v1::SessionContext::Status::CurrentState& from,
     upsf_session_context_status_current_state_t& to)
 {
@@ -1422,8 +1406,7 @@ UpsfMapping::map(
     return true;
 }
 
-bool
-UpsfMapping::map(
+bool UpsfMapping::map(
     const upsf_session_context_status_current_state_t& from,
     wt474_messages::v1::SessionContext::Status::CurrentState& to)
 {
@@ -1435,4 +1418,3 @@ UpsfMapping::map(
 
     return true;
 }
-
